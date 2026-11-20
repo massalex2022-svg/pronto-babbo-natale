@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#092b29">
 <meta name="description" content="Pronto Babbo Natale: una conversazione vocale natalizia interattiva con avatar animato gratuito.">
-<title>Pronto Babbo Natale? 🎅 Chiamata gratuita</title>
+<title>Pronto Babbo Natale? 🎅 Chiamata realistica gratuita</title>
 <style>
 :root{color-scheme:dark;--cream:#fff3db;--gold:#f6cb85;--dark:#092725;--sea:#11443a;--muted:#c5d6cc;--red:#ce3e48;--mint:#57d5ac;font-family:ui-rounded,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 *{box-sizing:border-box}
@@ -38,6 +38,8 @@ body.talking #talkMouth{animation:mouth 240ms ease-in-out infinite alternate}
 @keyframes mouth{0%{transform:scale(.86,.5)}40%{transform:scale(1.11,1.5)}100%{transform:scale(.94,.8)}}
 body.talking #santaFigure{animation:breath 1.5s ease-in-out infinite}
 #portrait{display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 24%;transform-origin:50% 38%;animation:portrait-breathe 6s ease-in-out infinite alternate}
+body.talking .stage.photo #portrait{animation:portrait-speaking 1.65s ease-in-out infinite alternate}
+@keyframes portrait-speaking{0%{transform:scale(1.01) translateY(0)}50%{transform:scale(1.029) translateY(2px)}100%{transform:scale(1.015) translateY(-3px)}}
 @keyframes portrait-breathe{to{transform:scale(1.035) translateY(-3px)}}
 .stage.photo #portrait{display:block}
 .stage.photo #santaArt{display:none}
@@ -98,7 +100,7 @@ summary{cursor:pointer;font-size:14px;font-weight:800}
 <section class="stage" id="stage" aria-label="Babbo Natale animato">
  <div class="particles"></div>
  <div class="stage-top"><div class="pill"><b></b><span id="callLabel">Pronto a chiamare</span></div><div class="pill">❄️ Polo Nord</div></div>
- <div class="mode-label" id="modeLabel">Avatar animato · labiale indicativo</div>
+ <div class="mode-label" id="modeLabel">Foto realistica · movimento leggero</div>
  <div class="stage-center">
   <img id="portrait" src="babbo-natale-foto.jpg" alt="Ritratto fotografico di Babbo Natale">
   <svg id="santaArt" viewBox="0 0 360 510" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Illustrazione animata di Babbo Natale che muove bocca e occhi">
@@ -164,14 +166,14 @@ summary{cursor:pointer;font-size:14px;font-weight:800}
  <section class="card">
   <div class="tag">🎄 CHIAMATA INTERATTIVA GRATUITA</div>
   <h2>Pronto, Babbo Natale?</h2>
-  <p>Babbo Natale ti ascolta, parla in italiano e muove la bocca mentre risponde. L'animazione è illustrata e indicativa, non un video con labiale fotorealistico.</p>
+  <p>Babbo Natale ti ascolta e risponde alle tue domande in italiano, con un ritratto fotografico in primo piano. La voce è regolabile nelle impostazioni gratuite.</p>
   <label class="field" for="kidName">Come ti chiami? (facoltativo)</label>
   <input id="kidName" type="text" maxlength="25" placeholder="Solo il nome, senza cognome" autocomplete="off">
   <div class="segment" role="group" aria-label="Aspetto di Babbo Natale">
-   <button id="animatedMode" type="button" class="selected" aria-pressed="true">🎅 Avatar animato</button>
-   <button id="photoMode" type="button" aria-pressed="false">📷 Foto realistica</button>
+   <button id="photoMode" type="button" class="selected" aria-pressed="true">📷 Babbo Natale reale</button>
+   <button id="animatedMode" type="button" aria-pressed="false">🎨 Cartoon (facoltativo)</button>
   </div>
-  <p id="lookHint" class="small">L'avatar animato muove gli occhi e la bocca durante il parlato. La fotografia è una foto ferma con un leggero movimento.</p>
+  <p id="lookHint" class="small">La fotografia realistica appare subito e si muove delicatamente durante la conversazione. Il labiale non è sincronizzato: per una bocca illustrata animata puoi passare al cartoon.</p>
   <label class="consent"><input type="checkbox" id="adultConsent"><span><b>Un adulto è presente.</b> Acconsento all'esperienza supervisionata. Non inserire dati personali del bambino: la voce può essere elaborata dal browser e i messaggi inviati al servizio AI configurato.</span></label>
   <button id="bigStart" type="button" class="wide">📞 Chiama Babbo Natale</button>
  </section>
@@ -191,12 +193,13 @@ summary{cursor:pointer;font-size:14px;font-weight:800}
   <details>
    <summary>🔊 Scegli e prova la voce italiana</summary>
    <div class="detail-body">
-    <p>Le voci gratuite dipendono dal dispositivo. Se una voce italiana maschile è installata, potrai selezionarla; altrimenti è utilizzata la voce italiana disponibile. Nessuna voce maschile è garantita.</p>
+    <p>La voce viene dal telefono: selezioniamo automaticamente una voce italiana maschile quando riconoscibile. Se non è disponibile, puoi provare il tono «Babbo Natale», ma rallentare e abbassare il tono non trasforma una voce femminile in una vera voce maschile.</p>
     <label class="field" for="voiceSelect">Voce disponibile</label>
     <select id="voiceSelect"><option value="">Automatica italiana</option></select>
-    <label class="field" for="pitch">Tono · <span id="pitchVal">0.75</span></label><input class="slider" id="pitch" type="range" min=".55" max="1.15" step=".05" value=".75">
-    <label class="field" for="rate">Velocità · <span id="rateVal">0.90</span></label><input class="slider" id="rate" type="range" min=".7" max="1.2" step=".05" value=".90">
-    <button class="wide secondary" id="voiceTest" type="button">▶ Prova: Oh oh oh, buon Natale!</button>
+    <label class="field" for="pitch">Tono · <span id="pitchVal">0.65</span></label><input class="slider" id="pitch" type="range" min=".45" max="1.15" step=".05" value=".65">
+    <label class="field" for="rate">Velocità · <span id="rateVal">0.82</span></label><input class="slider" id="rate" type="range" min=".65" max="1.2" step=".01" value=".82">
+    <button class="wide secondary" id="santaPreset" type="button">🎅 Imposta voce profonda e tranquilla</button>
+    <button class="wide secondary" id="voiceTest" type="button">▶ Ascolta la voce di Babbo Natale</button>
     <div class="small" id="voiceInfo"></div>
    </div>
   </details>
@@ -214,7 +217,7 @@ summary{cursor:pointer;font-size:14px;font-weight:800}
  </section>
 </div>
 </main>
-<footer class="foot">Questa è un'esperienza natalizia con un avatar animato, non una videochiamata reale. L'animazione della bocca segue indicativamente i tempi della voce e non i singoli suoni. L'anteprima fotocamera è facoltativa e rimane sul dispositivo: non viene inviata all'applicazione né registrata qui. Il riconoscimento vocale del browser può usare servizi esterni. La disponibilità delle risposte Gemini e delle voci dipende dai servizi e dalle loro quote gratuite. Supervisione adulta richiesta.</footer>
+<footer class="foot">Questa è un'esperienza natalizia AI con foto realistica (o cartoon opzionale), non una videochiamata con una persona reale. La foto ha soltanto un leggero movimento; nel cartoon, la bocca segue indicativamente i tempi della voce e non i singoli suoni. L'anteprima fotocamera è facoltativa e rimane sul dispositivo: non viene inviata all'applicazione né registrata qui. Il riconoscimento vocale del browser può usare servizi esterni. La disponibilità delle risposte Gemini e delle voci dipende dai servizi e dalle loro quote gratuite. Supervisione adulta richiesta.</footer>
 </div>
 <script>
 (function(){
@@ -244,7 +247,7 @@ function updateVoices(){
  if(voiceList.some((v,i)=>(v.voiceURI||String(i))===old))$("voiceSelect").value=old;
  $("voiceInfo").textContent=voiceList.length?voiceList.length+" voci italiane trovate sul dispositivo. Premi «Prova» per ascoltarle.":"Nessuna voce italiana rilevata per ora: il browser proverà la voce predefinita.";
 }
-function selectedVoice(){const id=$("voiceSelect").value;return voiceList.find((v,i)=>(v.voiceURI||String(i))===id)||voiceList.find(v=>/male|uomo|maschile/i.test(v.name))||voiceList[0]||null}
+function selectedVoice(){const id=$("voiceSelect").value;return voiceList.find((v,i)=>(v.voiceURI||String(i))===id)||voiceList.find(v=>/\b(male|uomo|maschile|riccardo|luca|giorgio|marco|giovanni|diego|roberto)\b/i.test(v.name))||voiceList[0]||null}
 function cancelVoice(){speechToken++;setSpeechState(false);if(synth)try{synth.cancel()}catch(e){}}
 function speak(text,preview){
  if(!hasVoice()){setStatus("Il dispositivo non offre la sintesi vocale. Puoi leggere la risposta nel dialogo.");setSpeechState(false);if(active&&micWanted)scheduleListen();return}
@@ -299,7 +302,7 @@ function start(){
  $("stage").classList.add("in-call");$("callLabel").textContent="Chiamata in corso";
  $("startBtn").hidden=true;$("endBtn").hidden=false;$("micBtn").disabled=false;$("bigStart").disabled=true;
  updateMic();setStatus(micWanted?"🎅 Babbo Natale ti saluta, poi ascolterà la tua voce.":"🎅 Babbo Natale è pronto! Scrivigli un messaggio.");
- const n=cleanName(),greet="Oh oh oh! "+(n?"Ciao "+n+"! ":"Ciao, piccolo amico! ")+"Benvenuto nel mio laboratorio al Polo Nord! Sono il tuo Babbo Natale virtuale. Come stai oggi?";
+ const n=cleanName(),greet="Oh, oh, oh! "+(n?"Ciao "+n+"! ":"Ciao, piccolo amico! ")+"Benvenuto nel mio laboratorio al Polo Nord! Sono il tuo Babbo Natale virtuale. Come stai oggi?";
  log("santa",greet);speak(greet,false);
 }
 function stop(){
@@ -363,10 +366,11 @@ function usePhoto(photo){
  $("stage").classList.toggle("photo",photo);
  $("photoMode").classList.toggle("selected",photo);$("animatedMode").classList.toggle("selected",!photo);
  $("photoMode").setAttribute("aria-pressed",String(photo));$("animatedMode").setAttribute("aria-pressed",String(!photo));
- $("modeLabel").textContent=photo?"Fotografia realistica · bocca ferma":"Avatar animato · labiale indicativo";
- $("lookHint").textContent=photo?"La fotografia è realistica, ma la bocca non si muove. Se vuoi vedere il labiale animato, seleziona «Avatar animato».":"L'avatar illustrato muove la bocca mentre parla, ma non segue perfettamente ogni sillaba.";
+ $("modeLabel").textContent=photo?"Foto realistica · movimento leggero":"Cartoon · labiale indicativo";
+ $("lookHint").textContent=photo?"Babbo Natale appare nella fotografia realistica, con un leggero movimento durante il parlato. La bocca NON segue le sillabe; per l’animazione illustrata puoi selezionare Cartoon.":"Il cartoon muove la bocca mentre parla, ma non segue esattamente i singoli suoni.";
 }
 $("animatedMode").onclick=()=>usePhoto(false);$("photoMode").onclick=()=>usePhoto(true);
+usePhoto(true);
 $("startBtn").onclick=start;$("bigStart").onclick=start;$("endBtn").onclick=stop;$("camBtn").onclick=toggleCamera;
 $("micBtn").onclick=()=>{
  if(!active)return;
@@ -387,7 +391,8 @@ $("voiceSelect").onchange=()=>remember("santa_voice",$("voiceSelect").value);
  $(id).oninput=()=>{$(out).textContent=Number($(id).value).toFixed(2);remember("santa_"+id,$(id).value)};
  const saved=recall("santa_"+id);if(saved)$(id).value=saved;$(out).textContent=Number($(id).value).toFixed(2);
 });
-$("voiceTest").onclick=()=>{stopRecognition();speak("Oh oh oh! Buon Natale! Sono Babbo Natale e ti saluto dal Polo Nord!",true)};
+$("santaPreset").onclick=()=>{$("pitch").value=".65";$("rate").value=".82";["pitch","rate"].forEach(id=>$(id).dispatchEvent(new Event("input")));setStatus("🎅 Voce impostata su tono più profondo e tranquillo. Premi «Ascolta» per provarla.");};
+$("voiceTest").onclick=()=>{stopRecognition();speak("Oh, oh, oh! Buon Natale, piccolo amico! Sono Babbo Natale. Che gioia sentirti dal Polo Nord!",true)};
 $("workerUrl").value=recall("santa_ai_endpoint")||defaultWorker;
 worker=$("workerUrl").value;
 $("saveWorker").onclick=()=>{
