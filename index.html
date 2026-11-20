@@ -1,122 +1,408 @@
-<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#102c27"><title>Pronto, Babbo Natale? 🎅</title><style>
-:root{font-family:ui-rounded,system-ui,-apple-system,'Segoe UI',sans-serif;color:#fff9ec;background:#0e2925}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 75% 0%,#2d6756 0,#13382f 35%,#0b2421 80%)}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}.wrap{max-width:1050px;margin:auto;padding:23px 18px 35px}header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:20px}.logo{font-size:26px;font-weight:950;letter-spacing:-1px}.logo span{color:#fbc878}.tag{font-size:11px;font-weight:800;letter-spacing:.15em;color:#e8d5ab}.hero{display:grid;grid-template-columns:1.25fr .75fr;gap:20px}.call{min-height:550px;border-radius:30px;overflow:hidden;position:relative;background:linear-gradient(145deg,#734a32,#301d19);box-shadow:0 20px 80px #0005;border:3px solid #d8ba7a}.call:before{content:'✦';position:absolute;left:8%;top:16%;font-size:50px;color:#ffe4a4;opacity:.65;z-index:1}.santa-img,.santa-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.santa-img{background:#66332c url('babbo-natale-foto.jpg') center/cover no-repeat}.santa-video{display:none}.shade{position:absolute;inset:0;background:linear-gradient(0deg,#0b1417d9,transparent 46%,#151e16aa);pointer-events:none}.topline{position:absolute;z-index:2;top:21px;left:21px;right:20px;display:flex;justify-content:space-between;align-items:center}.pill{padding:10px 13px;border-radius:100px;background:#161e1ac9;font-size:13px;font-weight:750;backdrop-filter:blur(8px)}.live-dot{width:9px;height:9px;background:#f85d64;border-radius:50%;display:inline-block;margin-right:6px}.childcam{position:absolute;right:18px;bottom:112px;width:117px;height:155px;background:#0c302c;border:2px solid #f6d6a1;border-radius:20px;overflow:hidden;z-index:2;box-shadow:0 5px 20px #0007;display:grid;place-items:center}.childcam video{width:100%;height:100%;object-fit:cover;display:none;transform:scaleX(-1)}.childcam .placeholder{text-align:center;color:#b7d8ce;font-size:13px;padding:5px}.childcam .placeholder b{font-size:40px;display:block}.callbottom{position:absolute;left:17px;right:17px;bottom:18px;z-index:3}.subtitle{font-size:15px;text-shadow:0 2px 5px #000;margin:0 0 15px;max-width:70%;min-height:46px}.buttons{display:flex;justify-content:center;gap:12px}.round{border:1px solid #ffffff77;border-radius:50%;width:57px;height:57px;background:#1b2d30d9;color:white;font-size:24px}.round.red{background:#d44c4d;border:none}.round.green{background:#2b9870;border:none}.side{display:flex;flex-direction:column;gap:16px}.panel{border:1px solid #ffffff24;border-radius:25px;background:#ffffff0b;padding:23px;box-shadow:0 10px 30px #0001}.panel h2{margin:0 0 10px;font-size:24px;letter-spacing:-.5px}.panel p{color:#d0dfd6;line-height:1.5;font-size:14px}.field{font-weight:750;color:#e9e6d2;font-size:12px;display:block;margin:12px 0 6px}input[type=text],input[type=number]{border:1px solid #ffffff30;background:#061c1a99;border-radius:12px;padding:13px 12px;width:100%;outline:0;color:white}input:focus{border-color:#eecb88}.wide{width:100%;border:none;background:#e9c77f;border-radius:14px;padding:14px 16px;font-weight:900;color:#233a2a;margin-top:12px}.wide.secondary{background:#ffffff15;color:white;border:1px solid #ffffff33}.small{color:#c3d7ce;font-size:12px;line-height:1.45}.emotions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.emotion{background:#ffffff0c;color:white;border:1px solid #ffffff30;border-radius:12px;padding:9px 1px;font-size:11px}.emotion b{display:block;font-size:25px}.emotion.selected{border-color:#eccc8d;background:#eccc8d30}.conversation{margin-top:15px;max-height:170px;overflow-y:auto;display:flex;flex-direction:column;gap:9px}.msg{font-size:13px;border-radius:14px;padding:10px 12px;line-height:1.4;max-width:94%}.msg.santa{background:#ffffff17;align-self:flex-start}.msg.kid{background:#b8874e4b;align-self:flex-end}.send{display:flex;gap:8px;margin-top:10px}.send input{flex:1;min-width:0}.send button{border:0;border-radius:12px;padding:0 14px;background:#e9c77f;font-size:23px}.foot{padding:16px 2px 0;color:#a3bcb2;font-size:12px;line-height:1.5}.status{font-size:12px;color:#f5d791;min-height:18px;margin-top:10px}.parents{margin-top:14px;padding:12px;border:1px solid #ffffff30;border-radius:14px;background:#06201d}.parents summary{font-weight:750;cursor:pointer;font-size:13px}.parents p{font-size:12px}.parents input{width:100%}.parents .wide{margin-top:9px}.upload{display:block;font-size:12px;color:#e9c77f;text-decoration:underline;margin-top:12px;cursor:pointer}.upload input{display:none}.sticker{font-size:24px}.hidden{display:none!important}@media(max-width:740px){.wrap{padding:15px 12px}.hero{grid-template-columns:1fr}.call{min-height:510px}.side{gap:12px}.panel{padding:18px}.logo{font-size:21px}.subtitle{font-size:13px}.childcam{width:98px;height:130px}.tag{font-size:9px}}
-
-/* Videochiamata AI live: il volto animato è fornito dal servizio Tavus */
-.live-first{background:linear-gradient(135deg,#3b9f6d,#1c6e5e)!important;color:white!important;border:1px solid #a7e6c3!important;box-shadow:0 9px 30px #0003}
-.live-first:disabled{opacity:.7}
-.parent-confirm{display:flex;align-items:start;gap:10px;margin-top:12px;font-size:12px;line-height:1.5;color:#f2e9cf;background:#072820;border:1px solid #87a68c77;border-radius:13px;padding:11px}
-.parent-confirm input{margin-top:3px;accent-color:#2eaa72;transform:scale(1.2)}
-.live-info{font-size:12px;color:#dfebdd;line-height:1.45;margin:9px 0}
-#liveOverlay{position:fixed;inset:0;background:#061511;z-index:10000;display:none;flex-direction:column;color:#fef4dc}
-#liveOverlay.open{display:flex}
-.live-header{display:flex;justify-content:space-between;align-items:center;gap:9px;padding:13px 18px;background:#0c3026;border-bottom:1px solid #e9c77f66;min-height:69px}
-.live-title{font-weight:850;font-size:17px}.live-title small{display:block;font-size:11px;font-weight:400;color:#c7d8cd;margin-top:5px}
-.live-end{background:#cd4350;border:0;border-radius:13px;padding:12px 15px;color:white;font-weight:850}
-.live-stage{position:relative;flex:1;min-height:0;background:#17322e url('babbo-natale-foto.jpg') center/cover no-repeat}
-.live-stage:before{content:'';position:absolute;inset:0;background:#061b1abf;pointer-events:none}
-#liveFrame{position:absolute;inset:0;border:0;width:100%;height:100%;background:transparent;display:none}
-.live-wait{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;width:min(93%,460px);font-size:18px;line-height:1.55}
-.live-wait .flake{font-size:50px;display:block;margin-bottom:9px}
-.live-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 16px;background:#0c3026;font-size:12px;line-height:1.5}
-.live-footer a{color:#f6d080;font-weight:800}
-.live-err{color:#ffcecb}
-@media(max-width:740px){.live-header{padding:10px 13px}.live-title{font-size:14px}.live-end{font-size:13px;padding:10px 12px}.live-footer{padding:10px 13px}}
-</style></head><body><div class="wrap"><header><div class="logo">🎅 Pronto, <span>Babbo Natale?</span></div><div class="tag">✨ DIRETTAMENTE DAL POLO NORD</div></header><main class="hero"><section class="call"><div id="santaPhoto" class="santa-img" role="img" aria-label="Ritratto fotografico di Babbo Natale"></div><video id="santaVideo" class="santa-video" playsinline loop muted></video><div class="shade"></div><div class="topline"><div class="pill"><span class="live-dot"></span><span id="connection">In attesa della chiamata</span></div><div class="pill">❄️ Polo Nord</div></div><div class="childcam"><video id="kidVideo" autoplay muted playsinline></video><div id="kidPlaceholder" class="placeholder"><b>📷</b>La tua<br>videocamera</div></div><div class="callbottom"><div class="subtitle" id="caption">La magia del Natale è a una chiamata di distanza…</div><div class="buttons"><button class="round" id="micBtn" title="Attiva/disattiva microfono" aria-label="Microfono">🎙️</button><button class="round" id="camBtn" title="Attiva/disattiva fotocamera" aria-label="Fotocamera">📷</button><button class="round green" id="callBtn" title="Avvia chiamata" aria-label="Avvia chiamata">📞</button><button class="round red" id="hangBtn" title="Termina chiamata" aria-label="Termina chiamata" disabled>☎</button></div></div></section><section class="side"><div class="panel"><div class="sticker">🎁 ✨ 🎄</div><h2>Una chiamata magica</h2><p>Videochiamata AI con un Babbo Natale virtuale, voce e labiale in tempo reale quando il servizio video è configurato. Oppure prova subito la demo vocale.</p><label class="field" for="kidName">NOME DEL BAMBINO (facoltativo)</label><input type="text" id="kidName" maxlength="25" placeholder="Come ti chiami?" autocomplete="off"><label class="field" for="kidAge">ETÀ (facoltativa)</label><input type="number" id="kidAge" min="3" max="13" placeholder="Es. 6"><label class="parent-confirm"><input id="parentConsent" type="checkbox"><span><b>Sono un adulto presente.</b> Autorizzo questa esperienza AI supervisionata e, per la videochiamata, l'uso di microfono e fotocamera. Non condividere dati personali del bambino.</span></label>
-<button class="wide live-first" id="videoStart" type="button">📹 VIDEOCHIAMA BABBO NATALE AI ✨</button>
-<p class="live-info" id="liveAvailability">Il video realistico con labiale sincronizzato richiede l'attivazione del servizio Tavus.</p>
-<button class="wide secondary" id="startBig">🎙️ Prova conversazione con voce (demo)</button><label class="upload">🎥 Carica un tuo video realistico di Babbo Natale<input id="customSanta" type="file" accept="video/mp4,video/webm,image/*"></label><div class="status" id="status"></div><details class="parents"><summary>🔊 Voce di Babbo Natale (scegli e prova)</summary><p>Seleziona una voce italiana disponibile sul telefono. Alcuni smartphone offrono soltanto una voce femminile: abbassare il tono non la trasforma in una voce maschile autentica.</p><label class="field" for="voiceSelect">VOCE DISPONIBILE</label><select id="voiceSelect" style="width:100%;padding:12px;border-radius:12px;background:#fff;color:#182d28;font-size:16px"><option value="">Voce italiana automatica</option></select><label class="field" for="voicePitch">TONO: <span id="pitchNum">0.65</span></label><input id="voicePitch" type="range" min="0.5" max="1.2" value="0.65" step="0.05" style="width:100%"><label class="field" for="voiceRate">VELOCITÀ: <span id="rateNum">0.85</span></label><input id="voiceRate" type="range" min="0.65" max="1.10" value="0.85" step="0.05" style="width:100%"><button class="wide secondary" id="testVoice">▶ Prova la voce: Oh oh oh!</button><p class="small" id="voiceNote">Le voci sono fornite dal telefono e possono variare.</p></details><details class="parents"><summary>⚙️ Impostazioni per i genitori (AI gratuita)</summary><p>La modalità base funziona senza account, con dialoghi guidati. Per vere risposte AI, inserisci qui l’indirizzo del tuo Cloudflare Worker. Non inserire chiavi API in questa pagina: la chiave resta protetta nel Worker.</p><label class="field" for="apiUrl">INDIRIZZO DEL SERVIZIO AI (FACOLTATIVO)</label><input type="url" id="apiUrl" placeholder="https://nome.workers.dev" autocomplete="off"><label class="field" for="videoApiUrl">INDIRIZZO WORKER VIDEO (TAVUS)</label><input id="videoApiUrl" type="url" autocomplete="off" placeholder="https://babbo-natale-video....workers.dev"><label class="field" for="adultAccess">CODICE ADULTO PER VIDEO</label><input id="adultAccess" type="password" maxlength="100" autocomplete="off" placeholder="Codice segreto impostato nel Worker video"><p class="small" style="margin:8px 0;color:#f3daa8"><b>Importante:</b> questo codice non viene salvato per sicurezza. Inseriscilo qui e premi «Videochiama Babbo Natale» senza ricaricare la pagina. Se lo dimentichi, puoi cambiarlo nei Secret di Cloudflare.</p><button class="wide secondary" id="saveVideoConfig" type="button">💾 Salva indirizzo Worker video</button><button class="wide secondary" id="saveApi">Salva indirizzo AI</button><div class="small" id="apiState">Modalità senza AI generativa</div><p class="small">Se abiliti l’AI esterna, i messaggi vocali trascritti e gli eventuali nome, età ed emozione selezionata sono inviati al servizio. Non viene inviata la videocamera. Usa questa funzione con un adulto presente.</p></details></div><div class="panel"><h2 style="font-size:18px">Come ti senti? 💖</h2><p style="margin:0">Se vuoi, scegli un'emozione: Babbo Natale adatterà le sue risposte.</p><div class="emotions" id="emotions"><button class="emotion" data-e="felice"><b>😄</b>Felice</button><button class="emotion" data-e="timido"><b>🥹</b>Timido</button><button class="emotion" data-e="triste"><b>😢</b>Triste</button><button class="emotion" data-e="emozionato"><b>🤩</b>Emozionato</button></div><div class="conversation" id="conversation" aria-live="polite"></div><div class="send"><input id="message" type="text" placeholder="Oppure scrivi a Babbo Natale…" aria-label="Messaggio"><button id="send" title="Invia messaggio" aria-label="Invia">➤</button></div></div></section></main><div class="foot">PROTOTIPO PER FAMIGLIE • Nella modalità dimostrativa la fotocamera rimane sul dispositivo. Durante la videochiamata AI, audio e video vengono trasmessi a Tavus; consulta la sua informativa privacy. L’app non registra direttamente la chiamata. Le emozioni sono selezionate volontariamente: non viene effettuata analisi automatica del volto. Un adulto deve supervisionare la chiamata. Nella prova voce Babbo Natale è una foto: il labiale sincronizzato è disponibile soltanto nella modalità video AI dopo l'attivazione di Tavus. La voce può dipendere dalle impostazioni del telefono.</div></div>
-<div id="liveOverlay" role="dialog" aria-modal="true" aria-label="Videochiamata con Babbo Natale virtuale">
-  <div class="live-header"><div class="live-title">🎅 Babbo Natale <small>❄️ Videochiamata virtuale dal Polo Nord</small></div><button class="live-end" id="liveEnd" type="button">☎ Termina</button></div>
-  <div class="live-stage"><div class="live-wait" id="liveWait"><span class="flake">❄️</span><strong id="liveWaitText">Collegamento in corso...</strong><p id="liveWaitSub">Babbo Natale sta preparando la sua videochiamata.</p><div id="liveErrorBox" style="display:none;background:#481d20f2;border:1px solid #ff9e9e;border-radius:15px;padding:14px;margin-top:16px;font-size:14px;text-align:left;overflow-wrap:anywhere"><div style="font-weight:850;margin-bottom:7px">⚠️ Messaggio del servizio</div><div id="liveErrorText" aria-live="assertive"></div><p id="premiumDemoLink" style="display:none;font-size:13px;margin-top:13px;line-height:1.5;color:#fff2d3">La demo pubblica di Tavus risulta sospesa dal suo proprietario. Per ora puoi usare la prova vocale dell’app, oppure scegliere un servizio di avatar personalizzato che consenta conversazioni in tempo reale.</p><button type="button" id="copyLiveError" style="background:#f3d29d;border:0;border-radius:10px;padding:10px 12px;margin-top:13px;font-weight:800;color:#25231e">📋 Copia messaggio</button><p style="font-size:12px;margin-bottom:0">Premi «Termina» per uscire. Non condividere codici o chiavi segrete.</p></div></div><iframe id="liveFrame" title="Avatar AI di Babbo Natale" allow="microphone;camera;autoplay;fullscreen;display-capture" referrerpolicy="no-referrer"></iframe></div>
-  <div class="live-footer"><span>Esperienza con un personaggio AI, non una persona reale · Un adulto deve restare presente.</span><a id="liveExternal" href="#" target="_blank" rel="noopener noreferrer" style="display:none">Apri la chiamata nel browser</a></div>
-</div><script>
-const $=id=>document.getElementById(id), speech=window.speechSynthesis, SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;let on=false, mic=false, cam=false, stream=null, recognition=null, listening=false, speaking=false, emotion='',history=[],apiEnabled=false, busy=false;let currentURL=null;let endpoint='';
-const name=()=> $('kidName').value.trim().replace(/[<>]/g,'').slice(0,25); const setStatus=t=>$('status').textContent=t;const caption=t=>$('caption').textContent=t;
-function add(role,text){history.push({role,text});const d=document.createElement('div');d.className='msg '+(role==='santa'?'santa':'kid');d.textContent=(role==='santa'?'🎅 ':'🧒 ')+text;$('conversation').append(d);$('conversation').scrollTop=$('conversation').scrollHeight;caption(text)}
-const random=a=>a[Math.floor(Math.random()*a.length)];function answer(t){let s=t.toLowerCase(),n=name(),who=n?', '+n:'';if(emotion==='triste')return random(['Oh, piccolo mio'+who+', mi dispiace che tu sia triste. Vuoi raccontarmi cosa è successo?','Ti mando un grande abbraccio dal Polo Nord. Cosa potrebbe farti sorridere un pochino?']);if(emotion==='timido')return random(['Non c’è fretta'+who+', possiamo parlare piano piano. Come si chiama il tuo gioco preferito?','Sai, anche le mie renne a volte sono timide! Ti va di dirmi il tuo colore preferito?']);if(/regal|vorrei|desider|giocattol|biciclett|lego|bambol/.test(s))return 'Ho ascoltato con attenzione il tuo desiderio'+who+'! Gli elfi annotano tante idee, ma non possiamo promettere ogni regalo. Qual è la cosa che ti piace di più di quello che hai scelto?';if(/renne|rudolph|rudolf/.test(s))return 'Le renne stanno benissimo! Rudolph si sta allenando a volare tra le stelle. Tu hai un animale preferito?';if(/elf|follett/.test(s))return 'Gli elfi oggi sono impegnatissimi nel laboratorio! Uno di loro ha perfino perso il cappello. Ti piace costruire le cose?';if(/trist|paur|sol|piang|male/.test(s))return 'Mi spiace sentirlo'+who+'. Grazie per avermelo raccontato. Vuoi parlarmene ancora? Puoi anche chiamare un adulto di cui ti fidi.';if(/ciao|salve|buongiorno/.test(s))return 'Ho ho ho! Ciao'+who+'! Che gioia sentirti! Qual è la parte più bella del Natale per te?';if(/come stai|come va/.test(s))return 'Sto benissimo! Sto bevendo una cioccolata calda vicino al camino. E tu come stai?';if(/natale|alber|decoraz|luc/.test(s))return 'Adoro le luci di Natale! Qui al Polo Nord brillano dappertutto. Hai già pensato a come addobbare casa?';if(/brav|cattiv/.test(s))return 'Ognuno può sbagliare e imparare, piccolo amico. Per me conta la gentilezza. Qual è un gesto carino che hai fatto ultimamente?';if(/vero|esist/.test(s))return 'Che bella domanda! Le storie di Natale sono piene di magia e fantasia. Qual è la tradizione natalizia che ami di più?';return random(['Ho ho ho! Che cosa interessante'+who+'! Raccontami ancora un po’.','Ti ascolto con le mie grandi orecchie da Babbo Natale! E poi cosa è successo?','Che meraviglia'+who+'! Sai cosa mi incuriosisce? Qual è la cosa che ti fa sorridere di più?','Qui al Polo Nord gli elfi sorriderebbero a sentirti! Vuoi raccontarmi qualcos’altro?'])}
-function voiceChoices(){if(!speech)return[];return speech.getVoices().filter(v=>/^it([_-]|$)/i.test(v.lang));}
-function refreshVoices(){const sel=$('voiceSelect');if(!sel)return;const old=sel.value||(() => {try{return localStorage.getItem('santa_voice')||''}catch{return ''}})();const voices=voiceChoices();sel.replaceChildren();const auto=document.createElement('option');auto.value='';auto.textContent='Automatica (italiano)';sel.append(auto);voices.forEach(v=>{const opt=document.createElement('option');opt.value=v.voiceURI;opt.textContent=v.name+' — '+v.lang;sel.append(opt)});if(voices.some(v=>v.voiceURI===old))sel.value=old;$('voiceNote').textContent=voices.length?voices.length+' voci italiane rilevate. Provale per trovare quella più calda.':'Nessuna voce italiana elencata: Chrome potrebbe usare la voce predefinita di Android.';}
-function chosenVoice(){const vs=voiceChoices(), selected=$('voiceSelect')?.value;return vs.find(v=>v.voiceURI===selected)||vs.find(v=>/\b(male|uomo|maschile)\b/i.test(v.name))||vs[0]||null;}
-function speakText(t,preview=false){if(!speech){setStatus('Sintesi vocale non disponibile.');return;}if(!preview&&!on)return;if(!preview)add('santa',t);speaking=true;if(recognition&&listening){try{recognition.stop()}catch{}}speech.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='it-IT';u.rate=Number($('voiceRate').value);u.pitch=Number($('voicePitch').value);const voice=chosenVoice();if(voice)u.voice=voice;u.onend=()=>{speaking=false;if(on&&mic)startListening()};u.onerror=()=>{speaking=false;setStatus('Voce non disponibile: prova un’altra voce nelle impostazioni.');};speech.speak(u)}
-function talk(t){speakText(t,false)}
-refreshVoices();if(speech){speech.addEventListener?.('voiceschanged',refreshVoices);setTimeout(refreshVoices,600)}
-try{const p=localStorage.getItem('santa_pitch'),r=localStorage.getItem('santa_rate');if(p)$('voicePitch').value=p;if(r)$('voiceRate').value=r;}catch{}
-for(const [id,out,key] of [['voicePitch','pitchNum','santa_pitch'],['voiceRate','rateNum','santa_rate']]){$(out).textContent=Number($(id).value).toFixed(2);$(id).oninput=()=>{$(out).textContent=Number($(id).value).toFixed(2);try{localStorage.setItem(key,$(id).value)}catch{}}}
-$('voiceSelect').onchange=()=>{try{localStorage.setItem('santa_voice',$('voiceSelect').value)}catch{}};
-$('testVoice').onclick=()=>speakText('Oh oh oh! Buon Natale! Sono Babbo Natale e ti saluto dal Polo Nord!',true);
-async function query(t){if(!on||busy||!t.trim())return;busy=true;add('kid',t);setStatus('🎅 Babbo Natale sta pensando…');let reply;try{if(!endpoint)throw Error('Modalità base');let controller=new AbortController();let timer=setTimeout(()=>controller.abort(),12000);let r;try{r=await fetch(endpoint.replace(/\/$/,'')+'/api/chat',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({message:t,history:history.slice(-10),name:name(),age:$('kidAge').value,emotion,accessCode:$('adultAccess').value.trim()}),signal:controller.signal})}finally{clearTimeout(timer)}if(r.ok){const d=await r.json();if(!d.reply||typeof d.reply!=='string')throw Error('Risposta non valida');reply=d.reply;apiEnabled=true}else throw Error('Servizio AI non raggiungibile')}catch(e){reply=answer(t);apiEnabled=false}finally{busy=false}if(on){setStatus(apiEnabled?'✨ Risposte generate dall’AI':'✨ Modalità dimostrativa: risposte locali');talk(reply)}}
-async function start(){if(!$('parentConsent').checked){setStatus('Un genitore deve prima confermare la supervisione.');return;}if(on)return;on=true;$('callBtn').disabled=true;$('hangBtn').disabled=false;$('startBig').disabled=true;$('connection').textContent='Chiamata in corso';setStatus(endpoint?'✨ Modalità AI: premi il microfono per parlare':'✨ Modalità base: premi il microfono per parlare');let n=name();talk('Ho ho ho! '+(n?'Ciao '+n+'! ':'Ciao, piccolo amico! ')+'Sono Babbo Natale e ti chiamo dal Polo Nord! Che bello sentirti. Come stai oggi?');}
-function hang(){on=false;mic=false;if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;cam=false;$('kidVideo').style.display='none';$('kidPlaceholder').style.display='block';}if(recognition){try{recognition.stop()}catch{}}speech?.cancel();speaking=false;$('connection').textContent='Chiamata terminata';$('callBtn').disabled=false;$('hangBtn').disabled=true;$('startBig').disabled=false;$('micBtn').style.background='';setStatus('Chiamata terminata. Puoi richiamare quando vuoi!');caption('Ho ho ho! A presto! 🎄')}
-function startListening(){if(!on||!mic||speaking||listening)return;if(!SpeechRecognition){setStatus('Il riconoscimento vocale non è supportato qui. Puoi scrivere il messaggio.');return}recognition=new SpeechRecognition();recognition.lang='it-IT';recognition.continuous=false;recognition.interimResults=false;recognition.onstart=()=>{listening=true;setStatus('🎤 Ti ascolto… parla pure!')};recognition.onresult=e=>{const t=e.results[0][0].transcript;listening=false;try{recognition.stop()}catch{}query(t)};recognition.onerror=e=>{listening=false;setStatus('Microfono: '+e.error+'. Puoi scrivere qui sotto.')};recognition.onend=()=>{listening=false};try{recognition.start()}catch{}}
-$('startBig').onclick=start;$('callBtn').onclick=start;$('hangBtn').onclick=hang;$('micBtn').onclick=()=>{if(!on){setStatus('Prima avvia la chiamata.');return}mic=!mic;$('micBtn').style.background=mic?'#238c70':'';if(mic)startListening();else{try{recognition?.stop()}catch{}setStatus('Microfono spento')}};
-$('camBtn').onclick=async()=>{if(cam){stream?.getTracks().forEach(t=>t.stop());stream=null;cam=false;$('kidVideo').style.display='none';$('kidPlaceholder').style.display='block';return}try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false});$('kidVideo').srcObject=stream;$('kidVideo').style.display='block';$('kidPlaceholder').style.display='none';cam=true}catch(e){setStatus('Fotocamera non disponibile: autorizzala dal browser (serve HTTPS).')}};
-$('send').onclick=()=>{let t=$('message').value.trim();$('message').value='';if(t){if(!on)start();query(t)}};$('message').onkeydown=e=>{if(e.key==='Enter')$('send').click()};document.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-e]').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');emotion=b.dataset.e;if(on)talk(({felice:'Che bello vederti così felice! Cosa ti rende tanto contento?',timido:'Non essere in pensiero, possiamo fare con calma. Vuoi raccontarmi una cosa piccola piccola?',triste:'Ti mando un abbraccio grandissimo. Vuoi dirmi perché sei triste?',emozionato:'Ho ho ho! Che entusiasmo contagioso! Dimmi, cosa ti emoziona tanto?'})[emotion])});
-$('customSanta').onchange=e=>{let f=e.target.files[0];if(!f)return;if(currentURL)URL.revokeObjectURL(currentURL);currentURL=URL.createObjectURL(f);if(f.type.startsWith('video/')){$('santaVideo').src=currentURL;$('santaVideo').style.display='block';$('santaVideo').play().catch(()=>{});}else if(f.type.startsWith('image/')){$('santaVideo').pause();$('santaVideo').style.display='none';$('santaPhoto').style.backgroundImage='url("'+currentURL+'")'}setStatus('🎥 Immagine/video personalizzato caricato (solo su questo dispositivo).')};$('saveApi').onclick=()=>{const val=$('apiUrl').value.trim();if(val&&!val.startsWith('https://')){setStatus('Per sicurezza serve un indirizzo https://');return}endpoint=val;try{localStorage.setItem('santa_ai_endpoint',val)}catch{}$('apiState').textContent=endpoint?'AI configurata: '+endpoint:'Modalità senza AI generativa';setStatus(endpoint?'✨ Indirizzo AI salvato. Prova a parlare.':'Modalità base attiva.');};try{endpoint=localStorage.getItem('santa_ai_endpoint')||'https://babbo-natale-ai.massalex2022.workers.dev';$('apiUrl').value=endpoint;$('apiState').textContent=endpoint?'AI configurata: '+endpoint:'Modalità senza AI generativa'}catch{}window.addEventListener('pagehide',()=>{stream?.getTracks().forEach(t=>t.stop());if(currentURL)URL.revokeObjectURL(currentURL)});
-
-/* Collegamento opzionale al servizio video real-time Tavus via Worker Cloudflare.
-   La chiave API non è mai esposta nel browser. */
-const LIVE_DEFAULT_API='';
-let liveId=null,liveBusy=false,liveUrl='';
-function liveApi(){return ($('videoApiUrl').value.trim()||LIVE_DEFAULT_API).replace(/\/$/,'')}
-function liveOpen(text){$('liveWaitText').textContent=text||'Collegamento in corso...';$('liveWaitSub').textContent='Babbo Natale sta preparando la sua videochiamata.';$('liveErrorBox').style.display='none';$('premiumDemoLink').style.display='none';$('liveWait').style.display='block';$('liveFrame').style.display='none';$('liveOverlay').classList.add('open');document.body.style.overflow='hidden'}
-function liveClose(){ $('liveOverlay').classList.remove('open');document.body.style.overflow='';$('liveFrame').src='about:blank';$('liveFrame').style.display='none';$('liveExternal').style.display='none';}
-async function livePost(path,body){
- const ctl=new AbortController(), timer=setTimeout(()=>ctl.abort(),30000);
- try {
-  const r=await fetch(liveApi()+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...body,accessCode:$('adultAccess').value.trim()}),signal:ctl.signal});
-  let data={};try{data=await r.json()}catch{}
-  if(!r.ok)throw new Error(data.error||('Il servizio ha risposto '+r.status));
-  return data;
- } finally {clearTimeout(timer)}
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#092b29">
+<meta name="description" content="Pronto Babbo Natale: una conversazione vocale natalizia interattiva con avatar animato gratuito.">
+<title>Pronto Babbo Natale? 🎅 Chiamata gratuita</title>
+<style>
+:root{color-scheme:dark;--cream:#fff3db;--gold:#f6cb85;--dark:#092725;--sea:#11443a;--muted:#c5d6cc;--red:#ce3e48;--mint:#57d5ac;font-family:ui-rounded,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}
+body{margin:0;color:var(--cream);background:radial-gradient(ellipse at 85% -10%,#316e56 0,#0d3930 36%,#071f1e 85%);min-height:100vh}
+button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.wrap{width:min(1160px,100%);margin:0 auto;padding:18px 15px 40px}
+header{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:5px 2px 19px}
+.brand{font-size:clamp(19px,3vw,28px);font-weight:950;letter-spacing:-.6px}
+.brand em{color:var(--gold);font-style:normal}
+.subtitle-head{font-size:11px;letter-spacing:.13em;font-weight:800;color:#e9d4a9}
+.layout{display:grid;grid-template-columns:minmax(0,1.13fr) minmax(290px,.87fr);gap:17px;align-items:start}
+.stage{position:relative;min-height:620px;overflow:hidden;border:2px solid #a17e52;border-radius:27px;isolation:isolate;background:#1d312e;box-shadow:0 26px 70px #0007}
+.stage:before{content:"";position:absolute;inset:-24px;z-index:-4;background:linear-gradient(#203d373b,#07191b72),url("babbo-natale-foto.jpg") center/cover;filter:blur(13px) saturate(1.12);transform:scale(1.12)}
+.stage:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,#071c1d85,transparent 25%,transparent 60%,#041616ef)}
+.particles{position:absolute;inset:0;z-index:-1;pointer-events:none;background-image:radial-gradient(#faf0df96 1px,transparent 1px),radial-gradient(#fbca8685 1.5px,transparent 1.5px);background-position:0 0,33px 45px;background-size:99px 132px,135px 158px;animation:snow 14s linear infinite}
+@keyframes snow{to{background-position:0 215px,33px 175px}}
+.stage-top{position:absolute;top:15px;left:14px;right:14px;z-index:4;display:flex;justify-content:space-between;align-items:center;gap:5px}
+.pill{border:1px solid #ffffff2d;background:#0a2a28de;backdrop-filter:blur(7px);border-radius:22px;padding:9px 11px;font-size:12px;font-weight:800}
+.pill b{display:inline-block;width:9px;height:9px;background:#aab4b0;border-radius:50%;margin-right:5px}
+.stage.in-call .pill b{background:#56d99a;box-shadow:0 0 0 5px #52d99a30}
+.stage-center{position:absolute;top:55px;bottom:166px;left:0;right:0;display:flex;align-items:center;justify-content:center}
+#santaArt{width:min(92%,440px);height:100%;max-height:540px;filter:drop-shadow(0 15px 22px #0008);overflow:visible}
+#santaFigure{transform-origin:180px 340px;animation:breath 4.6s ease-in-out infinite}
+@keyframes breath{50%{transform:translateY(-5px) rotate(-.7deg)}}
+#santaEyes{transform-box:fill-box;transform-origin:center;animation:blink 7.5s infinite}
+@keyframes blink{0%,42%,44%,100%{transform:scaleY(1)}43%{transform:scaleY(.09)}}
+#talkMouth{transform-box:fill-box;transform-origin:center;transition:transform .16s}
+body.talking #talkMouth{animation:mouth 240ms ease-in-out infinite alternate}
+@keyframes mouth{0%{transform:scale(.86,.5)}40%{transform:scale(1.11,1.5)}100%{transform:scale(.94,.8)}}
+body.talking #santaFigure{animation:breath 1.5s ease-in-out infinite}
+#portrait{display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 24%;transform-origin:50% 38%;animation:portrait-breathe 6s ease-in-out infinite alternate}
+@keyframes portrait-breathe{to{transform:scale(1.035) translateY(-3px)}}
+.stage.photo #portrait{display:block}
+.stage.photo #santaArt{display:none}
+.stage.photo .particles{opacity:.35}
+.mode-label{position:absolute;right:15px;top:64px;font-size:11px;background:#092b2aca;color:#ffe4b7;padding:7px 10px;border-radius:15px;z-index:4}
+#kidCam{position:absolute;right:14px;bottom:173px;width:100px;height:123px;border:2px solid #d8b783;background:#0a322f;border-radius:16px;z-index:5;box-shadow:0 5px 20px #0008;display:none;overflow:hidden}
+#kidCam video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.stage-bottom{position:absolute;z-index:5;bottom:0;left:0;right:0;padding:16px 18px 20px;background:linear-gradient(transparent,#031b1ae5 21%,#031b1af5)}
+#caption{font-size:clamp(14px,2.2vw,17px);font-weight:650;line-height:1.42;min-height:48px;margin:0 0 12px;text-shadow:0 2px 8px #000}
+.actions{display:flex;align-items:center;justify-content:center;gap:12px}
+.circle{width:56px;height:56px;border:1px solid #ffffff66;background:#183b3acb;color:white;border-radius:50%;display:grid;place-items:center;font-size:23px;flex:0 0 auto}
+.circle.call{background:#179d6d;border:0;box-shadow:0 0 0 6px #179d6d34}
+.circle.end{background:#c93e4c;border:0}
+.circle.active{background:#218d70;border:1px solid #bdf7de}
+.circle[hidden]{display:none}
+.status{margin-top:12px;font-size:12px;color:#ffe0a3;line-height:1.5;min-height:24px}
+.card{padding:20px;border:1px solid #ffffff21;background:#ffffff0b;border-radius:24px;box-shadow:0 11px 40px #0002;margin-bottom:14px}
+.card h2{margin:0 0 8px;font-size:23px;letter-spacing:-.4px}
+.card h3{margin:0 0 10px;font-size:17px}
+.card p,.small{font-size:13px;color:#caddd3;line-height:1.55}
+.name-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+label.field{display:block;font-size:12px;color:#f6e3c4;font-weight:800;margin:12px 0 6px}
+input[type=text],input[type=url],select{background:#041d1b;border:1px solid #ffffff3f;border-radius:12px;padding:12px;color:white;width:100%;min-width:0;outline:0;font-size:15px}
+select option{background:#173c37}
+.wide{display:block;width:100%;border:0;background:#ebca8a;color:#182d24;border-radius:13px;font-size:15px;font-weight:950;padding:14px;margin-top:12px}
+.wide.secondary{color:#fff6e7;background:#ffffff19;border:1px solid #ffffff37}
+.consent{display:flex;align-items:flex-start;gap:10px;padding:11px;background:#072d28;border:1px solid #ffffff26;border-radius:12px;font-size:12px;line-height:1.45;color:#e3e5d7;margin-top:14px}
+.consent input{accent-color:#26b584;flex-shrink:0;margin-top:2px;transform:scale(1.3)}
+.segment{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:13px}
+.segment button{background:#ffffff12;border:1px solid #ffffff2d;border-radius:12px;color:#f8f4e9;padding:10px 9px;font-size:12px;font-weight:800}
+.segment button.selected{background:#dfbe7e;color:#18342b;border-color:#ffeac5}
+.moods{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.moods button{border:1px solid #ffffff36;background:#ffffff0c;border-radius:12px;padding:8px 2px;color:white;font-size:11px}
+.moods button span{display:block;font-size:25px;margin-bottom:3px}
+.moods button.selected{background:#e9bb6b2f;border-color:#e6c589}
+.dialog{display:flex;flex-direction:column;gap:8px;max-height:220px;overflow:auto;margin:15px 0 0;min-height:46px}
+.bubble{padding:10px 12px;max-width:93%;font-size:13px;line-height:1.45;border-radius:13px;background:#ffffff16;align-self:flex-start;white-space:pre-wrap;overflow-wrap:anywhere}
+.bubble.kid{background:#9c7d4f72;align-self:flex-end}
+.send{display:flex;gap:7px;margin-top:10px}
+.send input{flex:1}
+.send button{background:#eac783;border:0;border-radius:12px;padding:0 15px;font-size:20px}
+details{border-top:1px solid #ffffff2c;padding-top:12px;margin-top:13px}
+summary{cursor:pointer;font-size:14px;font-weight:800}
+.detail-body{padding:7px 0 0}
+.slider{width:100%;accent-color:#e9c27d}
+.foot{font-size:12px;color:#b6cdc1;line-height:1.65;margin-top:16px}
+.tag{color:#d2e8cb;font-size:11px;letter-spacing:.06em;font-weight:850}
+.badge-plain{display:inline-block;padding:5px 8px;background:#ffffff1d;border-radius:9px;font-size:11px;color:#dcebdc}
+@media(max-width:785px){.layout{display:block}.stage{min-height: min(70vh,680px);height:clamp(465px,70vh,680px);margin-bottom:15px}.stage-center{bottom:142px}.stage-bottom{padding:13px 14px 15px}#kidCam{bottom:155px}.card{padding:18px}}
+@media(max-width:420px){header{flex-wrap:wrap;gap:3px}.subtitle-head{font-size:9px}.stage{height:510px;min-height:510px}.stage-center{bottom:160px}.mode-label{font-size:10px}.circle{width:52px;height:52px}.actions{gap:10px}.moods{gap:5px}}
+@media(prefers-reduced-motion:reduce){.particles,#santaFigure,#santaEyes,#portrait{animation:none}body.talking #talkMouth{animation:mouth 500ms ease-in-out infinite alternate}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div class="brand">🎅 Pronto, <em>Babbo Natale?</em></div><div class="subtitle-head">✨ UNA CHIAMATA DAL POLO NORD</div></header>
+<main class="layout">
+<section class="stage" id="stage" aria-label="Babbo Natale animato">
+ <div class="particles"></div>
+ <div class="stage-top"><div class="pill"><b></b><span id="callLabel">Pronto a chiamare</span></div><div class="pill">❄️ Polo Nord</div></div>
+ <div class="mode-label" id="modeLabel">Avatar animato · labiale indicativo</div>
+ <div class="stage-center">
+  <img id="portrait" src="babbo-natale-foto.jpg" alt="Ritratto fotografico di Babbo Natale">
+  <svg id="santaArt" viewBox="0 0 360 510" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Illustrazione animata di Babbo Natale che muove bocca e occhi">
+    <defs>
+      <linearGradient id="coat" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#eb3e4c"/><stop offset=".6" stop-color="#b8192b"/><stop offset="1" stop-color="#861d30"/></linearGradient>
+      <radialGradient id="skin" cx="48%" cy="33%" r="70%"><stop stop-color="#ffe2b6"/><stop offset=".75" stop-color="#e2a177"/><stop offset="1" stop-color="#b66e5a"/></radialGradient>
+      <linearGradient id="beard" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#fffdf1"/><stop offset=".5" stop-color="#d9e3dc"/><stop offset="1" stop-color="#9db3b8"/></linearGradient>
+      <linearGradient id="fur" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffdf2"/><stop offset="1" stop-color="#bccbd0"/></linearGradient>
+      <filter id="soft"><feGaussianBlur stdDeviation="5"/></filter>
+    </defs>
+    <ellipse cx="180" cy="489" rx="151" ry="15" fill="#0008" filter="url(#soft)"/>
+    <g id="santaFigure">
+      <path d="M46 484Q46 393 99 365L145 349 216 349 268 365Q319 396 320 484Z" fill="url(#coat)" stroke="#6d1e30" stroke-width="5"/>
+      <path d="M56 472Q48 411 85 382L101 382Q97 425 114 480" fill="#c72a3a" stroke="#751e30" stroke-width="3"/>
+      <path d="M305 472Q312 411 278 383L261 382Q267 434 249 480" fill="#bf2337" stroke="#751e30" stroke-width="3"/>
+      <path d="M168 351L169 481 198 482 198 351" fill="url(#fur)" stroke="#bdcacf" stroke-width="3"/>
+      <rect x="96" y="441" width="178" height="26" rx="11" fill="#2b292a" opacity=".85"/>
+      <rect x="165" y="435" width="36" height="35" rx="6" fill="#e8ca87" stroke="#ad8644" stroke-width="5"/>
+      <path d="M92 378Q121 350 155 360L180 392 208 360Q241 350 271 378" fill="none" stroke="#e8f0e9" stroke-width="20" stroke-linecap="round"/>
+      <path d="M101 119Q113 31 196 40Q260 44 275 120L246 171 110 168Z" fill="#a8142b" stroke="#710f23" stroke-width="5"/>
+      <path d="M143 54Q182 9 257 44Q305 74 304 119" fill="none" stroke="#ca253a" stroke-width="37" stroke-linecap="round"/>
+      <circle cx="300" cy="124" r="29" fill="url(#fur)" stroke="#cbd4d7" stroke-width="3"/>
+      <path d="M108 169Q85 194 91 233Q73 284 92 342Q81 375 117 392Q112 423 148 424Q156 455 185 445Q208 456 219 426Q253 424 255 395Q292 380 274 341Q298 291 278 241Q291 194 254 167Z" fill="url(#beard)" stroke="#b6c4c2" stroke-width="5"/>
+      <path d="M126 333Q112 372 134 388M230 337Q245 371 226 392M177 359Q169 416 182 433M144 377Q147 413 168 417" fill="none" stroke="#a6b6b5" stroke-width="4" opacity=".7"/>
+      <ellipse cx="180" cy="213" rx="89" ry="115" fill="url(#skin)" stroke="#af7560" stroke-width="5"/>
+      <ellipse cx="97" cy="233" rx="17" ry="27" fill="#e3a47e"/><ellipse cx="263" cy="233" rx="17" ry="27" fill="#e3a47e"/>
+      <ellipse cx="129" cy="251" rx="24" ry="17" fill="#f39c8f" opacity=".56"/><ellipse cx="231" cy="251" rx="24" ry="17" fill="#f39c8f" opacity=".56"/>
+      <g id="santaEyes">
+        <path d="M116 207Q138 185 158 205" stroke="#efe5d5" stroke-width="12" stroke-linecap="round" fill="none"/>
+        <path d="M202 205Q226 185 244 207" stroke="#efe5d5" stroke-width="12" stroke-linecap="round" fill="none"/>
+        <ellipse cx="143" cy="219" rx="10" ry="12" fill="#f8edd9"/><ellipse cx="219" cy="219" rx="10" ry="12" fill="#f8edd9"/>
+        <circle cx="145" cy="221" r="6" fill="#4d6e6d"/><circle cx="220" cy="221" r="6" fill="#4d6e6d"/>
+        <circle cx="146.5" cy="218" r="2.5" fill="white"/><circle cx="221.5" cy="218" r="2.5" fill="white"/>
+      </g>
+      <circle cx="142" cy="216" r="29" stroke="#d7b977" stroke-width="3.8" fill="none"/><circle cx="221" cy="216" r="29" stroke="#d7b977" stroke-width="3.8" fill="none"/>
+      <path d="M171 217Q182 211 193 217" stroke="#d7b977" stroke-width="3" fill="none"/><path d="M249 213L270 205" stroke="#d7b977" stroke-width="3"/>
+      <path d="M151 263Q176 279 209 260" stroke="#be6957" stroke-width="5" fill="none" opacity=".7"/>
+      <ellipse cx="181" cy="266" rx="27" ry="18" fill="#ebac8a" stroke="#b97060" stroke-width="4"/>
+      <path d="M158 282Q179 294 203 280" stroke="#d48b79" stroke-width="3" fill="none"/>
+      <path d="M120 294Q136 280 160 287Q173 295 180 303Q186 292 199 287Q224 279 242 294Q231 313 205 316Q192 313 180 309Q165 319 151 316Q129 317 120 294Z" fill="url(#fur)" stroke="#c1ccca" stroke-width="3"/>
+      <g id="talkMouth"><ellipse cx="181" cy="319" rx="22" ry="14" fill="#492127"/><path d="M163 315Q181 309 198 316" stroke="#ffe5cb" stroke-width="4" fill="none"/><ellipse cx="181" cy="329" rx="12" ry="3.5" fill="#a95664"/></g>
+      <path d="M119 326Q134 317 151 325L173 352Q160 391 143 399Q111 381 119 326ZM243 326Q229 315 212 325L189 352Q206 390 225 399Q251 376 243 326Z" fill="url(#beard)" stroke="#bdcaca" stroke-width="4"/>
+      <path d="M105 119Q152 93 201 112Q244 100 264 124" fill="none" stroke="url(#fur)" stroke-width="36" stroke-linecap="round"/>
+      <path d="M111 122Q181 104 252 123" fill="none" stroke="#f8fff6" stroke-width="7" stroke-linecap="round" opacity=".7"/>
+      <path d="M111 415Q105 426 111 454L132 458 149 433Q143 415 128 411Z" fill="url(#fur)"/>
+      <path d="M250 416Q262 423 249 453L230 457 213 432Q225 414 240 411Z" fill="url(#fur)"/>
+    </g>
+  </svg>
+ </div>
+ <div id="kidCam"><video id="selfVideo" autoplay muted playsinline></video></div>
+ <div class="stage-bottom">
+  <p id="caption" aria-live="polite">Oh oh oh! Ti aspetto al Polo Nord! 🎄</p>
+  <div class="actions">
+   <button id="micBtn" class="circle" aria-label="Attiva o disattiva ascolto" title="Microfono" disabled>🎙️</button>
+   <button id="camBtn" class="circle" aria-label="Attiva o disattiva anteprima fotocamera" title="Fotocamera sul dispositivo">📷</button>
+   <button id="startBtn" class="circle call" aria-label="Chiama Babbo Natale" title="Avvia chiamata">📞</button>
+   <button id="endBtn" class="circle end" aria-label="Termina chiamata" title="Termina chiamata" hidden>☎️</button>
+  </div>
+  <div class="status" id="status">Pronto per una conversazione gratuita. È un personaggio AI, non una videochiamata con una persona reale.</div>
+ </div>
+</section>
+<div class="right">
+ <section class="card">
+  <div class="tag">🎄 CHIAMATA INTERATTIVA GRATUITA</div>
+  <h2>Pronto, Babbo Natale?</h2>
+  <p>Babbo Natale ti ascolta, parla in italiano e muove la bocca mentre risponde. L'animazione è illustrata e indicativa, non un video con labiale fotorealistico.</p>
+  <label class="field" for="kidName">Come ti chiami? (facoltativo)</label>
+  <input id="kidName" type="text" maxlength="25" placeholder="Solo il nome, senza cognome" autocomplete="off">
+  <div class="segment" role="group" aria-label="Aspetto di Babbo Natale">
+   <button id="animatedMode" type="button" class="selected" aria-pressed="true">🎅 Avatar animato</button>
+   <button id="photoMode" type="button" aria-pressed="false">📷 Foto realistica</button>
+  </div>
+  <p id="lookHint" class="small">L'avatar animato muove gli occhi e la bocca durante il parlato. La fotografia è una foto ferma con un leggero movimento.</p>
+  <label class="consent"><input type="checkbox" id="adultConsent"><span><b>Un adulto è presente.</b> Acconsento all'esperienza supervisionata. Non inserire dati personali del bambino: la voce può essere elaborata dal browser e i messaggi inviati al servizio AI configurato.</span></label>
+  <button id="bigStart" type="button" class="wide">📞 Chiama Babbo Natale</button>
+ </section>
+ <section class="card">
+  <h3>Come ti senti oggi? 💖</h3>
+  <div id="moods" class="moods">
+   <button type="button" data-mood="felice"><span>😄</span>Felice</button>
+   <button type="button" data-mood="timido"><span>😊</span>Timido</button>
+   <button type="button" data-mood="triste"><span>😢</span>Triste</button>
+   <button type="button" data-mood="emozionato"><span>🤩</span>Emozionato</button>
+  </div>
+  <div id="chatLog" class="dialog" aria-live="polite"><div class="bubble">🎅 «Ti aspetto per una chiacchierata!»</div></div>
+  <div class="send"><input id="messageInput" type="text" maxlength="500" placeholder="Scrivi qualcosa a Babbo Natale…" aria-label="Scrivi a Babbo Natale"><button id="sendBtn" aria-label="Invia messaggio" type="button">➤</button></div>
+  <div class="small" id="aiMode">Le risposte saranno generate da Gemini quando il Worker AI risponde. Se non è disponibile useremo una modalità guidata e te lo segnaleremo.</div>
+ </section>
+ <section class="card">
+  <details>
+   <summary>🔊 Scegli e prova la voce italiana</summary>
+   <div class="detail-body">
+    <p>Le voci gratuite dipendono dal dispositivo. Se una voce italiana maschile è installata, potrai selezionarla; altrimenti è utilizzata la voce italiana disponibile. Nessuna voce maschile è garantita.</p>
+    <label class="field" for="voiceSelect">Voce disponibile</label>
+    <select id="voiceSelect"><option value="">Automatica italiana</option></select>
+    <label class="field" for="pitch">Tono · <span id="pitchVal">0.75</span></label><input class="slider" id="pitch" type="range" min=".55" max="1.15" step=".05" value=".75">
+    <label class="field" for="rate">Velocità · <span id="rateVal">0.90</span></label><input class="slider" id="rate" type="range" min=".7" max="1.2" step=".05" value=".90">
+    <button class="wide secondary" id="voiceTest" type="button">▶ Prova: Oh oh oh, buon Natale!</button>
+    <div class="small" id="voiceInfo"></div>
+   </div>
+  </details>
+  <details>
+   <summary>⚙️ Collegamento Gemini (per adulti)</summary>
+   <div class="detail-body">
+    <p>L'API Gemini rimane protetta nel Worker Cloudflare già creato: <b>non incollare chiavi segrete qui.</b> Questo indirizzo viene salvato solo nel browser.</p>
+    <label class="field" for="workerUrl">Indirizzo del Worker AI</label>
+    <input id="workerUrl" type="url" autocomplete="off" placeholder="https://babbo-natale-ai....workers.dev">
+    <button class="wide secondary" id="saveWorker" type="button">💾 Salva indirizzo AI</button>
+    <button class="wide secondary" id="testWorker" type="button">🔎 Verifica risposte AI</button>
+    <div id="workerTestResult" class="small" aria-live="polite"></div>
+   </div>
+  </details>
+ </section>
+</div>
+</main>
+<footer class="foot">Questa è un'esperienza natalizia con un avatar animato, non una videochiamata reale. L'animazione della bocca segue indicativamente i tempi della voce e non i singoli suoni. L'anteprima fotocamera è facoltativa e rimane sul dispositivo: non viene inviata all'applicazione né registrata qui. Il riconoscimento vocale del browser può usare servizi esterni. La disponibilità delle risposte Gemini e delle voci dipende dai servizi e dalle loro quote gratuite. Supervisione adulta richiesta.</footer>
+</div>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+const synth=window.speechSynthesis||null;
+const defaultWorker="https://babbo-natale-ai.massalex2022.workers.dev";
+let worker="",active=false,busy=false,micWanted=false,rec=null,listening=false,talking=false,speechToken=0,session=0,history=[],mood="",cameraStream=null,voiceList=[],lastResultAt=0,recRetry=null;
+function setStatus(t){$("status").textContent=t}
+function caption(t){$("caption").textContent=t}
+function setAI(t){$("aiMode").textContent=t}
+function log(role,text){history.push({role:role,text:text});if(history.length>24)history.shift();const div=document.createElement("div");div.className="bubble"+(role==="kid"?" kid":"");div.textContent=(role==="santa"?"🎅 ":"🧒 ")+text;$("chatLog").appendChild(div);$("chatLog").scrollTop=$("chatLog").scrollHeight;caption(text)}
+function cleanName(){return $("kidName").value.trim().replace(/[<>]/g,"").slice(0,25)}
+function remember(key,val){try{localStorage.setItem(key,val)}catch(e){}}
+function recall(key){try{return localStorage.getItem(key)}catch(e){return null}}
+function setSpeechState(val){talking=val;document.body.classList.toggle("talking",val)}
+function hasVoice(){return !!(synth&&typeof window.SpeechSynthesisUtterance==="function")}
+function italianVoices(){return synth?synth.getVoices().filter(v=>/^it([_-]|$)/i.test(v.lang)) : []}
+function updateVoices(){
+ if(!synth)return;
+ const old=$("voiceSelect").value||recall("santa_voice")||"";
+ voiceList=italianVoices();
+ $("voiceSelect").replaceChildren();
+ const automatic=document.createElement("option");automatic.value="";automatic.textContent="Italiano automatico";$("voiceSelect").append(automatic);
+ voiceList.forEach((v,i)=>{const o=document.createElement("option");o.value=v.voiceURI||String(i);o.textContent=v.name+" · "+v.lang;$("voiceSelect").append(o)});
+ if(voiceList.some((v,i)=>(v.voiceURI||String(i))===old))$("voiceSelect").value=old;
+ $("voiceInfo").textContent=voiceList.length?voiceList.length+" voci italiane trovate sul dispositivo. Premi «Prova» per ascoltarle.":"Nessuna voce italiana rilevata per ora: il browser proverà la voce predefinita.";
 }
-async function liveStart(){
- if(liveBusy)return;
- if(!liveApi()||!/^https:\/\//.test(liveApi())){setStatus('Prima configura il link del Worker video nelle impostazioni genitori.');return}
- if(!$('adultAccess').value.trim()){setStatus('⚠️ Inserisci prima il CODICE ADULTO PER VIDEO nelle Impostazioni genitori. Non viene salvato quando aggiorni la pagina.');$('adultAccess').focus();$('adultAccess').scrollIntoView({behavior:'smooth',block:'center'});return}
- if(!$('parentConsent').checked){setStatus('Prima serve il consenso e la presenza di un adulto.');$('parentConsent').focus();return}
- if(on)hang();
- liveBusy=true;$('videoStart').disabled=true;liveOpen('Babbo Natale sta rispondendo...');
- try {
-  const data=await livePost('/api/video/start',{nickname:$('kidName').value.trim(),emotion});
-  if(!data.conversationId||!data.roomUrl||!/^https:\/\//.test(data.roomUrl))throw new Error('Non è disponibile una stanza video valida.');
-  liveId=data.conversationId;liveUrl=data.roomUrl;
-  $('liveFrame').src=liveUrl;$('liveFrame').style.display='block';
-  $('liveExternal').href=liveUrl;$('liveExternal').style.display='';
-  $('liveFrame').onload=()=>{$('liveWait').style.display='none'};
-  setStatus('🎅 Videochiamata AI collegata: autorizza microfono e telecamera se richiesti.');
- } catch(err) {
-  const original=String(err?.message||'Errore sconosciuto.');
-  const premium=/replica is not available on your current plan|upgrade to access it/i.test(original);
-  const message=premium ? 'Il Babbo Natale realistico scelto non è incluso nel tuo piano Tavus. La chiave API e il codice adulto hanno funzionato. Non serve cambiare le password. La demo pubblica di Tavus è attualmente sospesa, quindi non utilizzarla. Puoi usare la modalità vocale gratuita oppure integrare un provider che supporti un avatar personalizzato.' : /Codice adulto mancante o errato/i.test(original) ? 'Cloudflare non riconosce il codice adulto. Controlla che il campo sia compilato; se lo è, aggiorna il Secret SANTA_ACCESS_CODE nel Worker e reinserisci lo stesso codice nell’app.' : original;
-  $('premiumDemoLink').style.display=premium?'block':'none';
-  $('liveWaitText').textContent='La videochiamata non è partita';
-  $('liveWaitSub').textContent='La chiamata è stata interrotta prima del collegamento. Ecco la causa restituita dal servizio:';
-  $('liveErrorText').textContent=message;
-  $('liveErrorBox').style.display='block';
-  $('liveWait').style.display='block';
-  $('liveFrame').style.display='none';
-  setStatus('⚠️ Video AI: '+message);
- } finally {liveBusy=false;$('videoStart').disabled=false}
+function selectedVoice(){const id=$("voiceSelect").value;return voiceList.find((v,i)=>(v.voiceURI||String(i))===id)||voiceList.find(v=>/male|uomo|maschile/i.test(v.name))||voiceList[0]||null}
+function cancelVoice(){speechToken++;setSpeechState(false);if(synth)try{synth.cancel()}catch(e){}}
+function speak(text,preview){
+ if(!hasVoice()){setStatus("Il dispositivo non offre la sintesi vocale. Puoi leggere la risposta nel dialogo.");setSpeechState(false);if(active&&micWanted)scheduleListen();return}
+ if(!preview&&!active)return;
+ const token=++speechToken;
+ try{synth.cancel()}catch(e){}
+ const u=new SpeechSynthesisUtterance(text);u.lang="it-IT";u.pitch=Number($("pitch").value);u.rate=Number($("rate").value);u.volume=1;
+ const v=selectedVoice();if(v)u.voice=v;
+ setSpeechState(true);
+ u.onstart=()=>{if(token===speechToken)setSpeechState(true)};
+ u.onend=()=>{if(token!==speechToken)return;setSpeechState(false);if(active&&micWanted)scheduleListen()};
+ u.onerror=()=>{if(token!==speechToken)return;setSpeechState(false);setStatus("Riproduzione vocale non disponibile su questo browser. Puoi continuare scrivendo.");if(active&&micWanted)scheduleListen()};
+ try{synth.speak(u)}catch(e){setSpeechState(false);setStatus("Errore nella voce del dispositivo.")}
 }
-async function liveEnd(){
- const id=liveId;liveId=null;liveClose();
- if(id){try{await livePost('/api/video/end',{conversationId:id})}catch(e){setStatus('Chiamata chiusa sul dispositivo. Chiusura del server da verificare.')}}
+function stopRecognition(){
+ clearTimeout(recRetry);
+ if(rec){try{rec.abort()}catch(e){}}rec=null;listening=false;
 }
-async function liveStatus(){
- if(!liveApi()){$('liveAvailability').textContent='⏳ Collega il nuovo Worker video nelle impostazioni genitori, poi potrai videochiamare Babbo Natale.';return}
+function scheduleListen(){
+ clearTimeout(recRetry);
+ if(active&&micWanted&&!talking&&!busy)recRetry=setTimeout(startListening,450);
+}
+function startListening(){
+ if(!active||!micWanted||talking||busy||listening)return;
+ if(!SR){setStatus("Il riconoscimento vocale non è disponibile: scrivi il tuo messaggio qui sotto.");micWanted=false;updateMic();return}
+ let r;
+ try{r=new SR();r.lang="it-IT";r.continuous=false;r.interimResults=false;r.maxAlternatives=1;rec=r}catch(e){setStatus("Microfono non supportato. Prova Chrome o usa la tastiera.");return}
+ r.onstart=()=>{listening=true;setStatus("🎤 Ti ascolto… parla pure!")};
+ r.onresult=e=>{
+  listening=false;lastResultAt=Date.now();
+  const t=e.results&&e.results[0]&&e.results[0][0]?e.results[0][0].transcript:"";
+  rec=null;if(t.trim())ask(t.trim());
+ };
+ r.onerror=e=>{
+  listening=false;rec=null;
+  if(!active||!micWanted)return;
+  if(e.error==="no-speech"){setStatus("🎤 Ti ascolto: puoi parlare oppure scrivere.");return}
+  if(e.error==="not-allowed"||e.error==="service-not-allowed"){micWanted=false;updateMic();setStatus("Microfono non autorizzato. Consenti l'accesso nelle impostazioni del browser, oppure scrivi.");return}
+  setStatus("Microfono: "+e.error+". Puoi scrivere un messaggio o ripremere 🎙️.");
+ };
+ r.onend=()=>{
+  listening=false;if(rec===r)rec=null;
+  // Per evitare riavvii continui, riprova l'ascolto solo dopo una risposta parlata o con un nuovo tocco.
+ };
+ try{r.start()}catch(e){listening=false;rec=null;setStatus("Per attivare il microfono tocca di nuovo 🎙️.")}
+}
+function updateMic(){$("micBtn").classList.toggle("active",micWanted);$("micBtn").setAttribute("aria-pressed",String(micWanted))}
+function start(){
+ if(active)return;
+ if(!$("adultConsent").checked){setStatus("Per iniziare è necessaria la conferma di un adulto presente.");$("adultConsent").focus();return}
+ active=true;session++;busy=false;micWanted=!!SR;
+ $("stage").classList.add("in-call");$("callLabel").textContent="Chiamata in corso";
+ $("startBtn").hidden=true;$("endBtn").hidden=false;$("micBtn").disabled=false;$("bigStart").disabled=true;
+ updateMic();setStatus(micWanted?"🎅 Babbo Natale ti saluta, poi ascolterà la tua voce.":"🎅 Babbo Natale è pronto! Scrivigli un messaggio.");
+ const n=cleanName(),greet="Oh oh oh! "+(n?"Ciao "+n+"! ":"Ciao, piccolo amico! ")+"Benvenuto nel mio laboratorio al Polo Nord! Sono il tuo Babbo Natale virtuale. Come stai oggi?";
+ log("santa",greet);speak(greet,false);
+}
+function stop(){
+ active=false;session++;busy=false;micWanted=false;updateMic();stopRecognition();cancelVoice();
+ if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null}
+ $("kidCam").style.display="none";$("stage").classList.remove("in-call");
+ $("callLabel").textContent="Chiamata conclusa";$("startBtn").hidden=false;$("endBtn").hidden=true;$("micBtn").disabled=true;$("bigStart").disabled=false;
+ caption("Oh oh oh! A presto, piccolo amico! 🎄");setStatus("Chiamata terminata. Puoi richiamare quando vuoi.");
+}
+function offlineReply(t){
+ const q=t.toLowerCase(),n=cleanName(),who=n?", "+n:"";
+ if(/trist|piang|paura|spavent|male|sol[oa]/.test(q)||mood==="triste")return "Oh, piccolo amico"+who+", mi spiace che ti senta così. Ti mando un grande abbraccio dal Polo Nord. Vuoi dirmi cosa è successo? Puoi anche parlarne con un adulto di cui ti fidi.";
+ if(/regal|desider|vorrei|giocattol|lego|bambol|biciclett/.test(q))return "Ho ascoltato il tuo desiderio"+who+"! Gli elfi amano preparare sorprese, ma non posso promettere un regalo preciso. Cosa ti piace di più di quel gioco?";
+ if(/renn|rudolph|rudolf/.test(q))return "Le renne si stanno allenando nella neve! Rudolph oggi ha corso così veloce che un elfo ha perso il cappello. Tu hai un animale preferito?";
+ if(/elf|follett/.test(q))return "Gli elfi sono molto occupati nel laboratorio! Uno ha nascosto un biscotto in una scatola dei regali. Che scherzetti fai tu?";
+ if(/ciao|salve|buongiorno|buonasera/.test(q))return "Oh oh oh! Che bello sentirti"+who+"! Raccontami: cosa ti piace di più del Natale?";
+ if(/vero|esist|robot|intelligenza artificiale/.test(q))return "Sono un Babbo Natale virtuale creato con l'intelligenza artificiale, per giocare e raccontare storie insieme. Quale storia natalizia vuoi ascoltare?";
+ if(/scuol|compit|amici|amiciz/.test(q))return "Anche gli elfi imparano ogni giorno qualcosa di nuovo! Ti va di raccontarmi come è andata oggi?";
+ if(/come stai|come va/.test(q))return "Benissimo, grazie! Ho una tazza di cioccolata calda e il camino acceso. E tu, come stai?";
+ if(mood==="timido")return "Non c'è nessuna fretta"+who+". Possiamo parlare piano piano. Vuoi dirmi il tuo colore preferito?";
+ if(mood==="emozionato"||mood==="felice")return "Oh oh oh! Il tuo entusiasmo fa scintillare tutto il laboratorio! Raccontami che cosa ti rende così felice.";
+ return "Ho ho ho! Che interessante"+who+"! Sono tutto orecchi, raccontami ancora un po'.";
+}
+async function aiReply(text){
+ const url=$("workerUrl").value.trim().replace(/\/+$/,"")||worker||defaultWorker;
+ if(!/^https:\/\/[a-z0-9.-]+(?::[0-9]+)?$/i.test(url))throw Error("indirizzo Worker non valido");
+ const ctrl=new AbortController();const tm=setTimeout(()=>ctrl.abort(),18000);
  try{
-  const r=await fetch(liveApi()+'/api/status',{signal:AbortSignal.timeout(8500)});
-  if(!r.ok)throw Error('offline');
-  const d=await r.json();
-  $('liveAvailability').textContent=d.video?'✅ Servizio video AI configurato. Il funzionamento dipende dalla disponibilità dell’avatar e dei minuti Tavus.':'⏳ Video AI non ancora attivato: serve una chiave Tavus nel Worker Cloudflare.';
- }catch{$('liveAvailability').textContent='⏳ Il servizio video non è ancora verificato. La demo vocale resta disponibile.'}
+  const response=await fetch(url+"/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:text,history:history.slice(-10),name:cleanName(),emotion:mood}),signal:ctrl.signal});
+  if(!response.ok)throw Error("HTTP "+response.status);
+  const j=await response.json();
+  const reply=j.reply||j.response||j.text||(j.result&&j.result.reply);
+  if(typeof reply!=="string"||!reply.trim())throw Error("risposta vuota");
+  return reply.trim().slice(0,1200);
+ }finally{clearTimeout(tm)}
 }
-$('copyLiveError').addEventListener('click',async()=>{const message=$('liveErrorText').textContent;if(!message)return;try{await navigator.clipboard.writeText(message);$('copyLiveError').textContent='✅ Messaggio copiato';}catch{$('copyLiveError').textContent='Seleziona il messaggio qui sopra';}});
-$('videoStart').addEventListener('click',liveStart);
-try{$('videoApiUrl').value=localStorage.getItem('santa_video_worker')||'';}catch{}
-$('saveVideoConfig').addEventListener('click',()=>{const u=$('videoApiUrl').value.trim();if(u&&!/^https:\/\/[a-z0-9.:-]+(?:\/)?$/i.test(u)){setStatus('Inserisci l’indirizzo HTTPS del Worker video senza percorsi aggiuntivi.');return}try{localStorage.setItem('santa_video_worker',u)}catch{}setStatus('Indirizzo Worker salvato. Il codice adulto NON viene salvato: inseriscilo prima di chiamare, senza aggiornare la pagina.');liveStatus();});
-$('liveEnd').addEventListener('click',liveEnd);
-$('saveApi').addEventListener('click',()=>setTimeout(liveStatus,0));
-window.addEventListener('pagehide',()=>{if(liveId){const id=liveId;liveId=null;fetch(liveApi()+'/api/video/end',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({conversationId:id,accessCode:$('adultAccess').value.trim()}),keepalive:true}).catch(()=>{})}});
-liveStatus();
-</script></body></html>
+async function ask(text){
+ if(!text||busy)return;
+ if(!active){setStatus("Prima premi «Chiama Babbo Natale».");return}
+ const callSession=session;busy=true;stopRecognition();cancelVoice();log("kid",text);setStatus("✨ Babbo Natale sta pensando…");
+ let reply,fromAI=false;
+ try{reply=await aiReply(text);fromAI=true}
+ catch(e){
+  reply=offlineReply(text);
+  const err=e&&e.name==="AbortError"?"tempo scaduto":String(e.message||e);
+  setAI("⚠️ Gemini non disponibile ("+err+"). Stai usando risposte dimostrative. Verifica il Worker nelle impostazioni.");
+ }
+ if(callSession!==session||!active)return;
+ busy=false;
+ if(fromAI){setAI("✅ Risposta AI generata tramite il tuo Worker Gemini.");setStatus("✨ Risposta AI pronta");}
+ else setStatus("⚠️ Risposta dimostrativa: Gemini non ha risposto.");
+ log("santa",reply);speak(reply,false);
+}
+async function toggleCamera(){
+ if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null;$("kidCam").style.display="none";$("camBtn").classList.remove("active");setStatus("Anteprima fotocamera spenta.");return}
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){setStatus("La fotocamera non è disponibile in questo browser.");return}
+ try{const st=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"},audio:false});cameraStream=st;$("selfVideo").srcObject=st;$("kidCam").style.display="block";$("camBtn").classList.add("active");setStatus("📷 Fotocamera attiva solo come anteprima sul tuo dispositivo.")}
+ catch(e){setStatus("Fotocamera non autorizzata o non disponibile. La chiamata funziona anche senza.")}
+}
+function usePhoto(photo){
+ $("stage").classList.toggle("photo",photo);
+ $("photoMode").classList.toggle("selected",photo);$("animatedMode").classList.toggle("selected",!photo);
+ $("photoMode").setAttribute("aria-pressed",String(photo));$("animatedMode").setAttribute("aria-pressed",String(!photo));
+ $("modeLabel").textContent=photo?"Fotografia realistica · bocca ferma":"Avatar animato · labiale indicativo";
+ $("lookHint").textContent=photo?"La fotografia è realistica, ma la bocca non si muove. Se vuoi vedere il labiale animato, seleziona «Avatar animato».":"L'avatar illustrato muove la bocca mentre parla, ma non segue perfettamente ogni sillaba.";
+}
+$("animatedMode").onclick=()=>usePhoto(false);$("photoMode").onclick=()=>usePhoto(true);
+$("startBtn").onclick=start;$("bigStart").onclick=start;$("endBtn").onclick=stop;$("camBtn").onclick=toggleCamera;
+$("micBtn").onclick=()=>{
+ if(!active)return;
+ micWanted=!micWanted;updateMic();
+ if(!micWanted){stopRecognition();setStatus("Microfono spento. Puoi continuare scrivendo.");}
+ else if(talking){setStatus("🎅 Babbo Natale finisce di parlare, poi ti ascolta.");}
+ else startListening();
+};
+$("sendBtn").onclick=()=>{const text=$("messageInput").value.trim();if(!text)return;$("messageInput").value="";ask(text)};
+$("messageInput").onkeydown=e=>{if(e.key==="Enter"){$("sendBtn").click()}};
+document.querySelectorAll("[data-mood]").forEach(btn=>btn.onclick=()=>{
+ document.querySelectorAll("[data-mood]").forEach(b=>b.classList.remove("selected"));
+ mood=btn.dataset.mood;btn.classList.add("selected");
+ setStatus("💖 Babbo Natale terrà conto dell'emozione che hai scelto.");
+});
+$("voiceSelect").onchange=()=>remember("santa_voice",$("voiceSelect").value);
+[["pitch","pitchVal"],["rate","rateVal"]].forEach(([id,out])=>{
+ $(id).oninput=()=>{$(out).textContent=Number($(id).value).toFixed(2);remember("santa_"+id,$(id).value)};
+ const saved=recall("santa_"+id);if(saved)$(id).value=saved;$(out).textContent=Number($(id).value).toFixed(2);
+});
+$("voiceTest").onclick=()=>{stopRecognition();speak("Oh oh oh! Buon Natale! Sono Babbo Natale e ti saluto dal Polo Nord!",true)};
+$("workerUrl").value=recall("santa_ai_endpoint")||defaultWorker;
+worker=$("workerUrl").value;
+$("saveWorker").onclick=()=>{
+ const url=$("workerUrl").value.trim().replace(/\/+$/,"");
+ if(!/^https:\/\/[a-z0-9.-]+(?::[0-9]+)?$/i.test(url)){$("workerTestResult").textContent="Inserisci un indirizzo HTTPS valido, senza /api/chat alla fine.";return}
+ worker=url;remember("santa_ai_endpoint",url);$("workerTestResult").textContent="Indirizzo salvato su questo dispositivo. La chiave Gemini deve restare su Cloudflare.";
+};
+$("testWorker").onclick=async()=>{
+ $("workerTestResult").textContent="Verifica in corso…";
+ try{const resp=await aiReply("Ciao Babbo Natale! Rispondi in italiano con una frase di saluto.");$("workerTestResult").textContent="✅ Gemini ha risposto: "+resp.slice(0,160);setAI("✅ Connessione Gemini verificata.");}
+ catch(e){$("workerTestResult").textContent="⚠️ Gemini non ha risposto: "+(e.name==="AbortError"?"tempo scaduto":e.message)+". La modalità dimostrativa rimane disponibile.";}
+};
+if(synth){updateVoices();synth.addEventListener&&synth.addEventListener("voiceschanged",updateVoices);setTimeout(updateVoices,650)}
+else $("voiceInfo").textContent="Sintesi vocale non disponibile sul dispositivo.";
+window.addEventListener("pagehide",()=>{stopRecognition();cancelVoice();cameraStream&&cameraStream.getTracks().forEach(t=>t.stop())});
+})();
+</script>
+</body></html>
