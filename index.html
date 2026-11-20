@@ -278,7 +278,40 @@ function updateVoices(){
 function selectedVoice(){const id=$("voiceSelect").value;return voiceList.find((v,i)=>(v.voiceURI||String(i))===id)||voiceList.find(v=>/\b(male|uomo|maschile|cosimo|riccardo|luca|giorgio|marco|giovanni|diego|roberto|pietro|davide)\b/i.test(v.name))||voiceList[0]||null}
 
 let piperModule=null, piperLoading=null, aiPlayer=null,aiAudioUrl=null;
+let meterCleanup=null;
+window.santaVoiceAmplitude=-1;
+function stopAmplitudeMeter(){
+ if(meterCleanup){try{meterCleanup()}catch(e){}meterCleanup=null}
+ window.santaVoiceAmplitude=-1;
+}
+function startAmplitudeMeter(player){
+ stopAmplitudeMeter();
+ try{
+  const stream=typeof player.captureStream==="function"?player.captureStream():null;
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(!stream||!AC||!stream.getAudioTracks().length)return;
+  const context=new AC();
+  if(context.state!=="running"){context.close().catch(()=>{});return;}
+  const source=context.createMediaStreamSource(stream);
+  const analyser=context.createAnalyser();analyser.fftSize=512;analyser.smoothingTimeConstant=.62;
+  source.connect(analyser);
+  const samples=new Uint8Array(analyser.fftSize);let id=0,ended=false,level=0;
+  function sample(){
+   if(ended||aiPlayer!==player)return;
+   analyser.getByteTimeDomainData(samples);
+   let sum=0;
+   for(let i=0;i<samples.length;i++){const value=(samples[i]-128)/128;sum+=value*value;}
+   const rms=Math.sqrt(sum/samples.length);
+   level=level*.56+Math.min(1,rms*7)*.44;
+   window.santaVoiceAmplitude=level;
+   id=requestAnimationFrame(sample);
+  }
+  meterCleanup=()=>{ended=true;cancelAnimationFrame(id);try{source.disconnect()}catch(e){}context.close().catch(()=>{});};
+  sample();
+ }catch(e){window.santaVoiceAmplitude=-1;}
+}
 function stopAiPlayer(){
+ stopAmplitudeMeter();
  if(aiPlayer){try{aiPlayer.pause();aiPlayer.src="";}catch(e){}aiPlayer=null}
  if(aiAudioUrl){URL.revokeObjectURL(aiAudioUrl);aiAudioUrl=null}
 }
@@ -310,6 +343,7 @@ async function piperSpeak(text,token){
  player.onplaying=()=>{
   if(token!==speechToken)return;
   setSpeechState(true);
+  startAmplitudeMeter(player);
   setStatus("🎅 Sta parlando Riccardo (voce maschile italiana, Piper).");
  };
  player.onended=()=>{stopAiPlayer();speechFinished(token)};
@@ -320,6 +354,7 @@ function nativeSpeak(text,token){
  if(token!==speechToken)return;
  if(!hasVoice()){setStatus("Questo browser non offre sintesi vocale. Puoi leggere le risposte.");speechFinished(token);return}
  if(synth)try{synth.cancel()}catch(e){}
+ window.santaVoiceAmplitude=-1;
  const u=new SpeechSynthesisUtterance(text);u.lang="it-IT";u.pitch=Number($("pitch").value);u.rate=Number($("rate").value);u.volume=1;
  const v=selectedVoice();if(v)u.voice=v;
  setSpeechState(true);
@@ -380,6 +415,7 @@ function start(){
  if(active)return;
  if(!$("adultConsent").checked){setStatus("Per iniziare è necessaria la conferma di un adulto presente.");$("adultConsent").focus();return}
  active=true;session++;busy=false;micWanted=!!SR;
+ history=[];lastSantaText="";$("replayBtn").disabled=true;$("chatLog").replaceChildren();
  $("stage").classList.add("in-call");$("callLabel").textContent="Chiamata in corso";
  $("startBtn").hidden=true;$("endBtn").hidden=false;$("micBtn").disabled=false;$("bigStart").disabled=true;
  updateMic();setStatus(micWanted?"🎅 Babbo Natale ti saluta, poi ascolterà la tua voce.":"🎅 Babbo Natale è pronto! Scrivigli un messaggio.");
@@ -462,7 +498,7 @@ $("micBtn").onclick=()=>{
 };
 $("sendBtn").onclick=()=>{const text=$("messageInput").value.trim();if(!text)return;$("messageInput").value="";ask(text)};
 $("replayBtn").onclick=()=>{if(!lastSantaText||busy)return;stopRecognition();cancelVoice();setStatus("🎅 Riascoltiamo la risposta di Babbo Natale.");speak(lastSantaText,true)};
-$("quietBtn").onclick=()=>{cancelVoice();stopRecognition();setStatus("🔇 Voce interrotta. Per parlare premi il microfono oppure scrivi.");$("callLabel").textContent=active?"☎️ Chiamata in corso":"Pronto a chiamare";};
+$("quietBtn").onclick=()=>{cancelVoice();stopRecognition();micWanted=false;updateMic();setStatus("🔇 Voce e microfono fermati. Per parlare premi il microfono oppure scrivi.");$("callLabel").textContent=active?"☎️ Chiamata in corso":"Pronto a chiamare";};
 $("messageInput").onkeydown=e=>{if(e.key==="Enter"){$("sendBtn").click()}};
 document.querySelectorAll("[data-mood]").forEach(btn=>btn.onclick=()=>{
  document.querySelectorAll("[data-mood]").forEach(b=>b.classList.remove("selected"));
@@ -507,7 +543,7 @@ window.addEventListener("pagehide",()=>{stopRecognition();cancelVoice();cameraSt
        img=document.getElementById("portrait"),info=document.getElementById("faceInfo");
  if(!stage||!canvas||!img||!info)return;
  const ctx=canvas.getContext("2d",{alpha:false});if(!ctx){info.textContent="Animazione facciale non supportata da questo browser.";return}
- let marks=null,ready=false,raf=0,frame=0,lastWidth=0,lastHeight=0,manualOverride=false,manualPosition={x:.42,y:.44};
+ let marks=null,ready=false,raf=0,frame=0,lastWidth=0,lastHeight=0,manualOverride=false,manualPosition={x:.42,y:.44},smoothedOpen=0;
  try{const saved=JSON.parse(localStorage.getItem("santa_mouth_position")||"null");if(saved&&Number.isFinite(saved.x)&&Number.isFinite(saved.y)){manualPosition={x:saved.x,y:saved.y};manualOverride=true;}}catch(e){}
  const calibrationBtn=document.getElementById("calibrateMouth"),pin=document.getElementById("calibrationPin");
  function setManualMode(label){
@@ -574,8 +610,13 @@ window.addEventListener("pagehide",()=>{stopRecognition();cancelVoice();cameraSt
   }
   const speaking=document.body.classList.contains("talking");
   if(speaking&&mw>6&&mw<w*.8){
-   const v=Math.max(0.1,Math.pow(Math.abs(Math.sin(performance.now()*.017)),.8));
-   const jawShift=Math.max(1,mw*.065*v);
+   const measured=window.santaVoiceAmplitude;
+   const t=performance.now();
+   const rhythm=Math.abs(Math.sin(t*.013)*(.65+.24*Math.sin(t*.004)))+.1*Math.abs(Math.sin(t*.023));
+   const target=Number.isFinite(measured)&&measured>=0?Math.max(.025,Math.min(1,measured)):Math.max(.08,Math.min(1,rhythm));
+   smoothedOpen=smoothedOpen*.59+target*.41;
+   const v=smoothedOpen;
+   const jawShift=Math.max(.5,mw*.065*v);
    ctx.save();
    ctx.beginPath();
    ctx.ellipse(mx,my+mw*.16,mw*.76,mw*.56,0,0,Math.PI*2);ctx.clip();
