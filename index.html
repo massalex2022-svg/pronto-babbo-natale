@@ -204,8 +204,8 @@ summary{cursor:pointer;font-size:14px;font-weight:800}
    <div class="detail-body">
     <p>La voce viene dal telefono: selezioniamo automaticamente una voce italiana maschile quando riconoscibile. Se non è disponibile, puoi provare il tono «Babbo Natale», ma rallentare e abbassare il tono non trasforma una voce femminile in una vera voce maschile.</p>
     <label class="field" for="voiceEngine">Motore della voce</label>
-    <select id="voiceEngine"><option value="kokoro">🎅 Nicola — voce italiana maschile AI gratuita (sperimentale)</option><option value="browser">Voce del telefono (immediata)</option></select>
-    <p class="small" id="kokoroHelp">Nicola usa Kokoro open-source direttamente nel browser. Al primo utilizzo scarica un modello di circa 90 MB, richiede tempo e memoria; se non funziona, l'app passa alla voce del telefono.</p>
+    <select id="voiceEngine"><option value="piper">🎅 Riccardo – voce maschile italiana locale (prova gratuita)</option><option value="browser">Voce già presente sul computer (immediata)</option></select>
+    <p class="small" id="kokoroHelp">Riccardo è una voce Piper gratuita, elaborata localmente sul PC: al primo uso può scaricare dati e impiegare tempo. È una funzione sperimentale, distinta dalla voce del sistema. Se fallisce, mostrerò l'errore preciso senza sostituirla automaticamente con una voce femminile.</p>
     <label class="field" for="voiceSelect">Voce del telefono (riserva)</label>
     <select id="voiceSelect"><option value="">Automatica italiana</option></select>
     <label class="field" for="pitch">Tono · <span id="pitchVal">0.65</span></label><input class="slider" id="pitch" type="range" min=".45" max="1.15" step=".05" value=".65">
@@ -257,70 +257,74 @@ function updateVoices(){
  const automatic=document.createElement("option");automatic.value="";automatic.textContent="Italiano automatico";$("voiceSelect").append(automatic);
  voiceList.forEach((v,i)=>{const o=document.createElement("option");o.value=v.voiceURI||String(i);o.textContent=v.name+" · "+v.lang;$("voiceSelect").append(o)});
  if(voiceList.some((v,i)=>(v.voiceURI||String(i))===old))$("voiceSelect").value=old;
- $("voiceInfo").textContent=voiceList.length?voiceList.length+" voci italiane trovate sul dispositivo. Premi «Prova» per ascoltarle.":"Nessuna voce italiana rilevata per ora: il browser proverà la voce predefinita.";
+ const maleNames=voiceList.filter(v=>/\b(cosimo|riccardo|luca|giorgio|marco|giovanni|diego|roberto|pietro|davide|maschile|male)\b/i.test(v.name)).map(v=>v.name);
+ $("voiceInfo").textContent=maleNames.length?"✅ Voci maschili italiane rilevate: "+maleNames.join(", ")+". Puoi selezionarne una.":"⚠️ Nessuna voce italiana maschile riconoscibile tra le "+voiceList.length+" voci italiane di questo browser. Puoi provare Riccardo (Piper) o installare una voce maschile nel sistema operativo.";
 }
-function selectedVoice(){const id=$("voiceSelect").value;return voiceList.find((v,i)=>(v.voiceURI||String(i))===id)||voiceList.find(v=>/\b(male|uomo|maschile|riccardo|luca|giorgio|marco|giovanni|diego|roberto)\b/i.test(v.name))||voiceList[0]||null}
+function selectedVoice(){const id=$("voiceSelect").value;return voiceList.find((v,i)=>(v.voiceURI||String(i))===id)||voiceList.find(v=>/\b(male|uomo|maschile|cosimo|riccardo|luca|giorgio|marco|giovanni|diego|roberto|pietro|davide)\b/i.test(v.name))||voiceList[0]||null}
 
-let kokoroEngine=null, kokoroLoading=null, aiPlayer=null,aiAudioUrl=null;
+let piperModule=null, piperLoading=null, aiPlayer=null,aiAudioUrl=null;
 function stopAiPlayer(){
  if(aiPlayer){try{aiPlayer.pause();aiPlayer.src="";}catch(e){}aiPlayer=null}
  if(aiAudioUrl){URL.revokeObjectURL(aiAudioUrl);aiAudioUrl=null}
 }
 function cancelVoice(){speechToken++;stopAiPlayer();setSpeechState(false);if(synth)try{synth.cancel()}catch(e){}}
-async function loadKokoro(){
- if(kokoroEngine)return kokoroEngine;
- if(!kokoroLoading){
-  kokoroLoading=(async()=>{
-   setStatus("🎅 Carico la voce italiana maschile Nicola: al primo avvio il modello può richiedere tempo e scaricare circa 90 MB…");
-   const m=await import("https://cdn.jsdelivr.net/npm/kokoro-js@1.2.1/dist/kokoro.web.js");
-   const t=await m.KokoroTTS.from_pretrained("onnx-community/Kokoro-82M-v1.0-ONNX",{dtype:"q8",device:"wasm"});
-   kokoroEngine=t;return t;
-  })().catch(err=>{kokoroLoading=null;throw err});
+async function loadPiper(){
+ if(piperModule)return piperModule;
+ if(!piperLoading){
+  piperLoading=(async()=>{
+   setStatus("🎅 Caricamento del motore Piper per la voce maschile Riccardo…");
+   const mod=await import("https://esm.sh/@realtimex/piper-tts-web@1.1.1?bundle");
+   if(!mod||typeof mod.predict!=="function")throw Error("Il modulo Piper non espone predict().");
+   piperModule=mod;return mod;
+  })().catch(e=>{piperLoading=null;throw e});
  }
- return kokoroLoading;
+ return piperLoading;
 }
 function speechFinished(token){
- if(token!==speechToken)return;
- setSpeechState(false);if(active&&micWanted)scheduleListen();
+ if(token!==speechToken)return;setSpeechState(false);if(active&&micWanted)scheduleListen();
 }
-async function kokoroSpeak(text,token){
- const model=await loadKokoro();
+async function piperSpeak(text,token){
+ const engine=await loadPiper();
  if(token!==speechToken)return;
- setStatus("🎙️ Nicola sta preparando la risposta in italiano…");
- const raw=await model.generate(text.slice(0,600),{voice:"im_nicola",speed:0.88});
+ setStatus("🎅 Sto generando la voce italiana maschile Riccardo… al primo utilizzo può volerci qualche minuto.");
+ const wav=await engine.predict({text:text.slice(0,500),voiceId:"it_IT-riccardo-x_low"});
  if(token!==speechToken)return;
- const wav=raw.toWav();
- const blob=wav instanceof Blob?wav:new Blob([wav],{type:"audio/wav"});
- aiAudioUrl=URL.createObjectURL(blob);
- const player=new Audio(aiAudioUrl);
- aiPlayer=player;
+ if(!(wav instanceof Blob))throw Error("Piper non ha restituito un file audio utilizzabile.");
+ aiAudioUrl=URL.createObjectURL(wav);
+ const player=new Audio(aiAudioUrl);aiPlayer=player;
+ player.onplaying=()=>{
+  if(token!==speechToken)return;
+  setSpeechState(true);
+  setStatus("🎅 Sta parlando Riccardo (voce maschile italiana, Piper).");
+ };
  player.onended=()=>{stopAiPlayer();speechFinished(token)};
- player.onerror=()=>{stopAiPlayer();speechFinished(token);setStatus("Errore durante la riproduzione della voce Nicola.")};
- setStatus("🎅 Babbo Natale sta parlando con la voce maschile Nicola.");
+ player.onerror=()=>{stopAiPlayer();speechFinished(token);setStatus("Errore nel file audio prodotto da Piper.")};
  await player.play();
 }
 function nativeSpeak(text,token){
  if(token!==speechToken)return;
- if(!hasVoice()){setStatus("Il dispositivo non offre una sintesi vocale. Puoi leggere la risposta nel dialogo.");speechFinished(token);return}
+ if(!hasVoice()){setStatus("Questo browser non offre sintesi vocale. Puoi leggere le risposte.");speechFinished(token);return}
  if(synth)try{synth.cancel()}catch(e){}
  const u=new SpeechSynthesisUtterance(text);u.lang="it-IT";u.pitch=Number($("pitch").value);u.rate=Number($("rate").value);u.volume=1;
  const v=selectedVoice();if(v)u.voice=v;
  setSpeechState(true);
  u.onend=()=>speechFinished(token);
- u.onerror=()=>{if(token!==speechToken)return;setStatus("Voce del dispositivo non disponibile.");speechFinished(token)};
+ u.onerror=()=>{if(token!==speechToken)return;setStatus("Voce del browser non disponibile.");speechFinished(token)};
  try{synth.speak(u)}catch(e){speechFinished(token)}
 }
 function speak(text,preview){
  if(!preview&&!active)return;
  const token=++speechToken;stopAiPlayer();if(synth)try{synth.cancel()}catch(e){}
- if($("voiceEngine").value==="kokoro"){
+ if($("voiceEngine").value==="piper"){
   setSpeechState(false);
-  kokoroSpeak(text,token).catch(e=>{
+  piperSpeak(text,token).catch(e=>{
    if(token!==speechToken)return;
-   setStatus("⚠️ La voce Nicola non è disponibile in questo browser ("+String(e.message||e).slice(0,100)+"). Uso la voce del telefono.");
-   $("kokoroHelp").textContent="⚠️ Nicola non si è avviata. Per ora è attiva la voce del dispositivo: prova più tardi da Chrome su computer.";
-   $("voiceEngine").value="browser";
-   nativeSpeak(text,token);
+   const message=String((e&&e.message)||e).slice(0,220);
+   setStatus("⚠️ Riccardo non disponibile: "+message+". Seleziona la voce del computer per continuare.");
+   $("kokoroHelp").textContent="⚠️ Il motore Piper non ha funzionato su questo PC: "+message+". È un problema della libreria o del download, non del fatto che usi Chrome.";
+   // Non attivare una voce femminile in automatico.
+   setSpeechState(false);
+   if(active&&micWanted)scheduleListen();
   });
  }else nativeSpeak(text,token);
 }
@@ -449,8 +453,9 @@ document.querySelectorAll("[data-mood]").forEach(btn=>btn.onclick=()=>{
  setStatus("💖 Babbo Natale terrà conto dell'emozione che hai scelto.");
 });
 $("voiceSelect").onchange=()=>remember("santa_voice",$("voiceSelect").value);
-$("voiceEngine").value=recall("santa_voice_engine")||"kokoro";
-$("voiceEngine").onchange=()=>{remember("santa_voice_engine",$("voiceEngine").value);cancelVoice();setStatus($("voiceEngine").value==="kokoro"?"🎅 Voce maschile Nicola scelta. Premi «Ascolta la voce» per scaricarla e provarla.":"🔊 Voce del dispositivo selezionata.");};
+const savedEngine=recall("santa_voice_engine");
+$("voiceEngine").value=savedEngine==="piper"?"piper":"browser";
+$("voiceEngine").onchange=()=>{remember("santa_voice_engine",$("voiceEngine").value);cancelVoice();setStatus($("voiceEngine").value==="piper"?"🎅 Voce maschile Riccardo scelta. Premi «Ascolta» per provarla; il primo caricamento può richiedere tempo.":"🔊 Voce del computer selezionata.");};
 [["pitch","pitchVal"],["rate","rateVal"]].forEach(([id,out])=>{
  $(id).oninput=()=>{$(out).textContent=Number($(id).value).toFixed(2);remember("santa_"+id,$(id).value)};
  const saved=recall("santa_"+id);if(saved)$(id).value=saved;$(out).textContent=Number($(id).value).toFixed(2);
