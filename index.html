@@ -81,6 +81,19 @@ select option{background:#173c37}
 .moods button{border:1px solid #ffffff36;background:#ffffff0c;border-radius:12px;padding:8px 2px;color:white;font-size:11px}
 .moods button span{display:block;font-size:25px;margin-bottom:3px}
 .moods button.selected{background:#e9bb6b2f;border-color:#e6c589}
+.quick-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+.quick-controls button{background:#ffffff16;color:#fff0d8;border:1px solid #ffffff33;padding:10px 7px;border-radius:11px;font-size:12px;font-weight:750}
+.expressive-cue{position:absolute;left:15px;top:65px;z-index:4;font-size:25px;filter:drop-shadow(0 2px 5px #000b)}
+.stage.in-call .expressive-cue{animation:emotiveGlow 3.5s ease-in-out infinite}
+@keyframes emotiveGlow{50%{transform:scale(1.15) rotate(4deg)}}
+.voice-meter{display:flex;align-items:center;gap:4px;height:16px;margin:-6px 0 11px;opacity:.42}
+.voice-meter i{width:4px;height:4px;border-radius:10px;background:#e8c888;display:block;transition:height .1s ease-out}
+body.talking .voice-meter{opacity:1}
+body.talking .voice-meter i{animation:meterTalk .54s ease-in-out infinite alternate}
+body.talking .voice-meter i:nth-child(2){animation-delay:.1s}body.talking .voice-meter i:nth-child(3){animation-delay:.21s}
+body.talking .voice-meter i:nth-child(4){animation-delay:.06s}body.talking .voice-meter i:nth-child(5){animation-delay:.16s}
+body.talking .voice-meter i:nth-child(6){animation-delay:.29s}body.talking .voice-meter i:nth-child(7){animation-delay:.13s}
+@keyframes meterTalk{from{height:4px}to{height:13px}}
 .dialog{display:flex;flex-direction:column;gap:8px;max-height:220px;overflow:auto;margin:15px 0 0;min-height:46px}
 .bubble{padding:10px 12px;max-width:93%;font-size:13px;line-height:1.45;border-radius:13px;background:#ffffff16;align-self:flex-start;white-space:pre-wrap;overflow-wrap:anywhere}
 .bubble.kid{background:#9c7d4f72;align-self:flex-end}
@@ -106,7 +119,7 @@ summary{cursor:pointer;font-size:14px;font-weight:800}
 <section class="stage" id="stage" aria-label="Babbo Natale animato">
  <div class="particles"></div>
  <div class="stage-top"><div class="pill"><b></b><span id="callLabel">Pronto a chiamare</span></div><div class="pill">❄️ Polo Nord</div></div>
- <div class="mode-label" id="modeLabel">Foto realistica · movimento leggero</div>
+ <div class="mode-label" id="modeLabel">Foto realistica · bocca simulata</div><div class="expressive-cue" id="expressiveCue" aria-hidden="true">✨</div>
  <div class="stage-center">
   <img id="portrait" src="babbo-natale-foto.jpg" alt="Ritratto fotografico di Babbo Natale"><canvas id="photoFaceCanvas" aria-label="Fotografia con movimento simulato della bocca" role="img"></canvas><span id="calibrationPin" aria-hidden="true"></span>
   <svg id="santaArt" viewBox="0 0 360 510" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Illustrazione animata di Babbo Natale che muove bocca e occhi">
@@ -159,6 +172,7 @@ summary{cursor:pointer;font-size:14px;font-weight:800}
  <div id="kidCam"><video id="selfVideo" autoplay muted playsinline></video></div>
  <div class="stage-bottom">
   <p id="caption" aria-live="polite">Oh oh oh! Ti aspetto al Polo Nord! 🎄</p>
+  <div class="voice-meter" id="voiceMeter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
   <div class="actions">
    <button id="micBtn" class="circle" aria-label="Attiva o disattiva ascolto" title="Microfono" disabled>🎙️</button>
    <button id="camBtn" class="circle" aria-label="Attiva o disattiva anteprima fotocamera" title="Fotocamera sul dispositivo">📷</button>
@@ -196,6 +210,7 @@ summary{cursor:pointer;font-size:14px;font-weight:800}
   </div>
   <div id="chatLog" class="dialog" aria-live="polite"><div class="bubble">🎅 «Ti aspetto per una chiacchierata!»</div></div>
   <div class="send"><input id="messageInput" type="text" maxlength="500" placeholder="Scrivi qualcosa a Babbo Natale…" aria-label="Scrivi a Babbo Natale"><button id="sendBtn" aria-label="Invia messaggio" type="button">➤</button></div>
+  <div class="quick-controls"><button id="replayBtn" type="button" disabled>🔁 Riascolta Babbo Natale</button><button id="quietBtn" type="button">🔇 Ferma la voce</button></div>
   <div class="small" id="aiMode">Le risposte saranno generate da Gemini quando il Worker AI risponde. Se non è disponibile useremo una modalità guidata e te lo segnaleremo.</div>
  </section>
  <section class="card">
@@ -238,15 +253,15 @@ const $=id=>document.getElementById(id);
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 const synth=window.speechSynthesis||null;
 const defaultWorker="https://babbo-natale-ai.massalex2022.workers.dev";
-let worker="",active=false,busy=false,micWanted=false,rec=null,listening=false,talking=false,speechToken=0,session=0,history=[],mood="",cameraStream=null,voiceList=[],lastResultAt=0,recRetry=null;
+let worker="",active=false,busy=false,micWanted=false,rec=null,listening=false,talking=false,speechToken=0,session=0,history=[],mood="",cameraStream=null,voiceList=[],lastResultAt=0,recRetry=null,lastSantaText="";
 function setStatus(t){$("status").textContent=t}
 function caption(t){$("caption").textContent=t}
 function setAI(t){$("aiMode").textContent=t}
-function log(role,text){history.push({role:role,text:text});if(history.length>24)history.shift();const div=document.createElement("div");div.className="bubble"+(role==="kid"?" kid":"");div.textContent=(role==="santa"?"🎅 ":"🧒 ")+text;$("chatLog").appendChild(div);$("chatLog").scrollTop=$("chatLog").scrollHeight;caption(text)}
+function log(role,text){if(role==="santa"){lastSantaText=text;$("replayBtn").disabled=false;}history.push({role:role,text:text});if(history.length>24)history.shift();const div=document.createElement("div");div.className="bubble"+(role==="kid"?" kid":"");div.textContent=(role==="santa"?"🎅 ":"🧒 ")+text;$("chatLog").appendChild(div);$("chatLog").scrollTop=$("chatLog").scrollHeight;caption(text)}
 function cleanName(){return $("kidName").value.trim().replace(/[<>]/g,"").slice(0,25)}
 function remember(key,val){try{localStorage.setItem(key,val)}catch(e){}}
 function recall(key){try{return localStorage.getItem(key)}catch(e){return null}}
-function setSpeechState(val){talking=val;document.body.classList.toggle("talking",val)}
+function setSpeechState(val){talking=val;document.body.classList.toggle("talking",val);if(val&&active){$("callLabel").textContent="🎅 Babbo Natale sta parlando";}else if(active&&!busy){$("callLabel").textContent=micWanted?"🎤 In ascolto":"☎️ Chiamata in corso";}}
 function hasVoice(){return !!(synth&&typeof window.SpeechSynthesisUtterance==="function")}
 function italianVoices(){return synth?synth.getVoices().filter(v=>/^it([_-]|$)/i.test(v.lang)) : []}
 function updateVoices(){
@@ -341,7 +356,7 @@ function startListening(){
  if(!SR){setStatus("Il riconoscimento vocale non è disponibile: scrivi il tuo messaggio qui sotto.");micWanted=false;updateMic();return}
  let r;
  try{r=new SR();r.lang="it-IT";r.continuous=false;r.interimResults=false;r.maxAlternatives=1;rec=r}catch(e){setStatus("Microfono non supportato. Prova Chrome o usa la tastiera.");return}
- r.onstart=()=>{listening=true;setStatus("🎤 Ti ascolto… parla pure!")};
+ r.onstart=()=>{listening=true;$("callLabel").textContent="🎤 In ascolto";setStatus("🎤 Ti ascolto… parla pure!")};
  r.onresult=e=>{
   listening=false;lastResultAt=Date.now();
   const t=e.results&&e.results[0]&&e.results[0][0]?e.results[0][0].transcript:"";
@@ -360,7 +375,7 @@ function startListening(){
  };
  try{r.start()}catch(e){listening=false;rec=null;setStatus("Per attivare il microfono tocca di nuovo 🎙️.")}
 }
-function updateMic(){$("micBtn").classList.toggle("active",micWanted);$("micBtn").setAttribute("aria-pressed",String(micWanted))}
+function updateMic(){$("micBtn").classList.toggle("active",micWanted);$("micBtn").setAttribute("aria-pressed",String(micWanted));if(active&&!talking&&!busy)$("callLabel").textContent=micWanted?"🎤 In ascolto":"☎️ Chiamata in corso";}
 function start(){
  if(active)return;
  if(!$("adultConsent").checked){setStatus("Per iniziare è necessaria la conferma di un adulto presente.");$("adultConsent").focus();return}
@@ -408,7 +423,7 @@ async function aiReply(text){
 async function ask(text){
  if(!text||busy)return;
  if(!active){setStatus("Prima premi «Chiama Babbo Natale».");return}
- const callSession=session;busy=true;stopRecognition();cancelVoice();log("kid",text);setStatus("✨ Babbo Natale sta pensando…");
+ const callSession=session;busy=true;stopRecognition();cancelVoice();log("kid",text);$("callLabel").textContent="✨ Sto pensando";setStatus("✨ Babbo Natale sta pensando…");
  let reply,fromAI=false;
  try{reply=await aiReply(text);fromAI=true}
  catch(e){
@@ -446,11 +461,15 @@ $("micBtn").onclick=()=>{
  else startListening();
 };
 $("sendBtn").onclick=()=>{const text=$("messageInput").value.trim();if(!text)return;$("messageInput").value="";ask(text)};
+$("replayBtn").onclick=()=>{if(!lastSantaText||busy)return;stopRecognition();cancelVoice();setStatus("🎅 Riascoltiamo la risposta di Babbo Natale.");speak(lastSantaText,true)};
+$("quietBtn").onclick=()=>{cancelVoice();stopRecognition();setStatus("🔇 Voce interrotta. Per parlare premi il microfono oppure scrivi.");$("callLabel").textContent=active?"☎️ Chiamata in corso":"Pronto a chiamare";};
 $("messageInput").onkeydown=e=>{if(e.key==="Enter"){$("sendBtn").click()}};
 document.querySelectorAll("[data-mood]").forEach(btn=>btn.onclick=()=>{
  document.querySelectorAll("[data-mood]").forEach(b=>b.classList.remove("selected"));
  mood=btn.dataset.mood;btn.classList.add("selected");
- setStatus("💖 Babbo Natale terrà conto dell'emozione che hai scelto.");
+ const moodIcons={felice:"😄",timido:"💛",triste:"💙",emozionato:"✨"};
+ $("expressiveCue").textContent=moodIcons[mood]||"✨";
+ setStatus("💖 Babbo Natale terrà conto dell'emozione scelta, senza analizzare il volto del bambino.");
 });
 $("voiceSelect").onchange=()=>remember("santa_voice",$("voiceSelect").value);
 const savedEngine=recall("santa_voice_engine");
