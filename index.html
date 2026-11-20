@@ -42,6 +42,12 @@ body.talking .stage.photo #portrait{animation:portrait-speaking 1.65s ease-in-ou
 @keyframes portrait-speaking{0%{transform:scale(1.01) translateY(0)}50%{transform:scale(1.029) translateY(2px)}100%{transform:scale(1.015) translateY(-3px)}}
 @keyframes portrait-breathe{to{transform:scale(1.035) translateY(-3px)}}
 .stage.photo #portrait{display:block}
+#photoFaceCanvas{display:none;position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.stage.photo.face-animated #photoFaceCanvas{display:block}
+.stage.photo.face-animated #portrait{visibility:hidden}
+.stage.photo.face-animated{overflow:hidden}
+.stage.face-animated .mode-label{background:#1a4535e0}
+
 .stage.photo #santaArt{display:none}
 .stage.photo .particles{opacity:.35}
 .mode-label{position:absolute;right:15px;top:64px;font-size:11px;background:#092b2aca;color:#ffe4b7;padding:7px 10px;border-radius:15px;z-index:4}
@@ -102,7 +108,7 @@ summary{cursor:pointer;font-size:14px;font-weight:800}
  <div class="stage-top"><div class="pill"><b></b><span id="callLabel">Pronto a chiamare</span></div><div class="pill">❄️ Polo Nord</div></div>
  <div class="mode-label" id="modeLabel">Foto realistica · movimento leggero</div>
  <div class="stage-center">
-  <img id="portrait" src="babbo-natale-foto.jpg" alt="Ritratto fotografico di Babbo Natale">
+  <img id="portrait" src="babbo-natale-foto.jpg" alt="Ritratto fotografico di Babbo Natale"><canvas id="photoFaceCanvas" aria-label="Fotografia con movimento simulato della bocca" role="img"></canvas>
   <svg id="santaArt" viewBox="0 0 360 510" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Illustrazione animata di Babbo Natale che muove bocca e occhi">
     <defs>
       <linearGradient id="coat" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#eb3e4c"/><stop offset=".6" stop-color="#b8192b"/><stop offset="1" stop-color="#861d30"/></linearGradient>
@@ -173,7 +179,8 @@ summary{cursor:pointer;font-size:14px;font-weight:800}
    <button id="photoMode" type="button" class="selected" aria-pressed="true">📷 Babbo Natale reale</button>
    <button id="animatedMode" type="button" aria-pressed="false">🎨 Cartoon (facoltativo)</button>
   </div>
-  <p id="lookHint" class="small">La fotografia realistica appare subito e si muove delicatamente durante la conversazione. Il labiale non è sincronizzato: per una bocca illustrata animata puoi passare al cartoon.</p>
+  <p id="lookHint" class="small">Preparazione del riconoscimento del volto… quando disponibile, muoveremo la zona della bocca in modo simulato. Non è una vera animazione AI labiale.</p>
+  <p id="faceInfo" class="small" aria-live="polite">🔎 Cerco i punti del volto nella fotografia, senza inviare immagini a un server.</p>
   <label class="consent"><input type="checkbox" id="adultConsent"><span><b>Un adulto è presente.</b> Acconsento all'esperienza supervisionata. Non inserire dati personali del bambino: la voce può essere elaborata dal browser e i messaggi inviati al servizio AI configurato.</span></label>
   <button id="bigStart" type="button" class="wide">📞 Chiama Babbo Natale</button>
  </section>
@@ -420,7 +427,7 @@ function usePhoto(photo){
  $("photoMode").classList.toggle("selected",photo);$("animatedMode").classList.toggle("selected",!photo);
  $("photoMode").setAttribute("aria-pressed",String(photo));$("animatedMode").setAttribute("aria-pressed",String(!photo));
  $("modeLabel").textContent=photo?"Foto realistica · movimento leggero":"Cartoon · labiale indicativo";
- $("lookHint").textContent=photo?"Babbo Natale appare nella fotografia realistica, con un leggero movimento durante il parlato. La bocca NON segue le sillabe; per l’animazione illustrata puoi selezionare Cartoon.":"Il cartoon muove la bocca mentre parla, ma non segue esattamente i singoli suoni.";
+ $("lookHint").textContent=photo?"Nella foto la zona della bocca si muove in modo simulato se il rilevamento facciale riesce. Non è un labiale fotorealistico sincronizzato.":"Il cartoon muove la bocca mentre parla, ma non segue esattamente i singoli suoni.";
 }
 $("animatedMode").onclick=()=>usePhoto(false);$("photoMode").onclick=()=>usePhoto(true);
 usePhoto(true);
@@ -463,6 +470,85 @@ $("testWorker").onclick=async()=>{
 if(synth){updateVoices();synth.addEventListener&&synth.addEventListener("voiceschanged",updateVoices);setTimeout(updateVoices,650)}
 else $("voiceInfo").textContent="Sintesi vocale non disponibile sul dispositivo.";
 window.addEventListener("pagehide",()=>{stopRecognition();cancelVoice();cameraStream&&cameraStream.getTracks().forEach(t=>t.stop())});
+})();
+</script>
+
+<script>
+/* Animazione facciale gratuita: FaceMesh identifica i punti su una foto,
+   Canvas muove localmente la zona della bocca. Non è lip-sync fonetico né video AI. */
+(function(){
+ const stage=document.getElementById("stage"),canvas=document.getElementById("photoFaceCanvas"),
+       img=document.getElementById("portrait"),info=document.getElementById("faceInfo");
+ if(!stage||!canvas||!img||!info)return;
+ const ctx=canvas.getContext("2d",{alpha:false});if(!ctx){info.textContent="Animazione facciale non supportata da questo browser.";return}
+ let marks=null,ready=false,raf=0,frame=0,lastWidth=0,lastHeight=0;
+ const base="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4";
+ function loadScript(url){
+  return new Promise((ok,fail)=>{const s=document.createElement("script");s.src=url;s.crossOrigin="anonymous";s.onload=ok;s.onerror=()=>fail(new Error("Libreria di riconoscimento non caricata."));document.head.appendChild(s)})
+ }
+ async function detect(){
+  try{
+   if(!img.complete||!img.naturalWidth)await new Promise((resolve,reject)=>{img.addEventListener("load",resolve,{once:true});img.addEventListener("error",reject,{once:true})});
+   await loadScript(base+"/face_mesh.js");
+   if(!window.FaceMesh)throw Error("Rilevamento non disponibile");
+   const fm=new FaceMesh({locateFile:(file)=>base+"/"+file});
+   fm.setOptions({maxNumFaces:1,refineLandmarks:false,minDetectionConfidence:.45,staticImageMode:true});
+   fm.onResults(res=>{
+    const faces=res.multiFaceLandmarks;
+    if(faces&&faces[0]&&faces[0][61]&&faces[0][291]&&faces[0][13]){
+     marks=faces[0];ready=true;
+     stage.classList.add("face-animated");
+     info.textContent="✅ Volto individuato. Durante la voce, la bocca e la parte inferiore del viso si animano. Movimento indicativo, non sincronizzato per sillaba.";
+     render();
+    }else info.textContent="⚠️ Non riesco a individuare la bocca nella foto: resta visibile il ritratto senza animazione. Il cartoon rimane disponibile.";
+   });
+   await fm.send({image:img});
+   await fm.close();
+  }catch(e){
+   info.textContent="⚠️ Rilevamento del viso non disponibile ("+String(e.message||e).slice(0,60)+"). La foto resta visibile e il cartoon funziona senza questo sistema.";
+  }
+ }
+ function draw(){
+  if(!ready||!stage.classList.contains("photo")||document.hidden){raf=0;return}
+  const w=canvas.clientWidth,h=canvas.clientHeight;
+  if(!w||!h){raf=requestAnimationFrame(draw);return}
+  const ratio=Math.min(2,window.devicePixelRatio||1),cw=Math.round(w*ratio),ch=Math.round(h*ratio);
+  if(cw!==lastWidth||ch!==lastHeight){canvas.width=cw;canvas.height=ch;lastWidth=cw;lastHeight=ch}
+  ctx.setTransform(ratio,0,0,ratio,0,0);
+  ctx.clearRect(0,0,w,h);
+  const iw=img.naturalWidth,ih=img.naturalHeight,fit=Math.max(w/iw,h/ih),
+   drawW=iw*fit,drawH=ih*fit,ox=(w-drawW)/2,oy=(h-drawH)/2;
+  ctx.drawImage(img,ox,oy,drawW,drawH);
+  const p=i=>({x:ox+marks[i].x*drawW,y:oy+marks[i].y*drawH});
+  const l=p(61),r=p(291),upper=p(13),lower=p(14);
+  const mw=Math.hypot(r.x-l.x,r.y-l.y);
+  const mx=(l.x+r.x)/2,my=(upper.y+lower.y)/2;
+  const speaking=document.body.classList.contains("talking");
+  if(speaking&&mw>6&&mw<w*.8){
+   const v=Math.max(0.1,Math.pow(Math.abs(Math.sin(performance.now()*.017)),.8));
+   const jawShift=Math.max(1,mw*.065*v);
+   ctx.save();
+   ctx.beginPath();
+   ctx.ellipse(mx,my+mw*.16,mw*.76,mw*.56,0,0,Math.PI*2);ctx.clip();
+   ctx.drawImage(img,ox,oy+jawShift,drawW,drawH);
+   ctx.restore();
+   const angle=Math.atan2(r.y-l.y,r.x-l.x);
+   ctx.save();ctx.translate(mx,my+mw*.055);ctx.rotate(angle);
+   ctx.fillStyle="rgba(55,23,25,.84)";ctx.beginPath();
+   ctx.ellipse(0,mw*.06,mw*.36,mw*(.025+.155*v),0,0,Math.PI*2);ctx.fill();
+   ctx.fillStyle="rgba(245,225,201,.78)";ctx.beginPath();
+   ctx.ellipse(0,-mw*(.006+.04*v),mw*.23,mw*.028,0,0,Math.PI*2);ctx.fill();
+   ctx.restore();
+  }
+  frame++;
+  raf=requestAnimationFrame(draw);
+ }
+ function render(){if(ready&&!raf)raf=requestAnimationFrame(draw)}
+ new MutationObserver(render).observe(document.body,{attributes:true,attributeFilter:["class"]});
+ new MutationObserver(render).observe(stage,{attributes:true,attributeFilter:["class"]});
+ window.addEventListener("resize",render);
+ document.addEventListener("visibilitychange",render);
+ if(img.complete&&img.naturalWidth)detect();else img.addEventListener("load",detect,{once:true});
 })();
 </script>
 </body></html>
