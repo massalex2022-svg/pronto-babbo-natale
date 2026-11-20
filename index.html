@@ -83,6 +83,9 @@ select option{background:#173c37}
 .moods button.selected{background:#e9bb6b2f;border-color:#e6c589}
 .quick-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
 .quick-controls button{background:#ffffff16;color:#fff0d8;border:1px solid #ffffff33;padding:10px 7px;border-radius:11px;font-size:12px;font-weight:750}
+.ai-indicator{border:1px solid #eac67b55;background:#493d235c;color:#fff0cf;padding:11px 12px;border-radius:12px;font-size:13px;font-weight:800;margin:13px 0 7px;line-height:1.4}
+.ai-indicator.ok{border-color:#53c99980;background:#1758418a}
+.ai-indicator.fail{border-color:#e58a8a85;background:#582e339c}
 .expressive-cue{position:absolute;left:15px;top:65px;z-index:4;font-size:25px;filter:drop-shadow(0 2px 5px #000b)}
 .stage.in-call .expressive-cue{animation:emotiveGlow 3.5s ease-in-out infinite}
 @keyframes emotiveGlow{50%{transform:scale(1.15) rotate(4deg)}}
@@ -211,7 +214,9 @@ summary{cursor:pointer;font-size:14px;font-weight:800}
   <div id="chatLog" class="dialog" aria-live="polite"><div class="bubble">🎅 «Ti aspetto per una chiacchierata!»</div></div>
   <div class="send"><input id="messageInput" type="text" maxlength="500" placeholder="Scrivi qualcosa a Babbo Natale…" aria-label="Scrivi a Babbo Natale"><button id="sendBtn" aria-label="Invia messaggio" type="button">➤</button></div>
   <div class="quick-controls"><button id="replayBtn" type="button" disabled>🔁 Riascolta Babbo Natale</button><button id="quietBtn" type="button">🔇 Ferma la voce</button></div>
-  <div class="small" id="aiMode">Le risposte saranno generate da Gemini quando il Worker AI risponde. Se non è disponibile useremo una modalità guidata e te lo segnaleremo.</div>
+  <div class="ai-indicator" id="aiIndicator" role="status" aria-live="polite">🟡 Collegamento Gemini da verificare</div>
+  <div class="small" id="aiMode">Quando Gemini non è disponibile, Babbo Natale usa risposte guidate e non può rispondere liberamente a qualsiasi domanda.</div>
+  <button class="wide secondary" id="aiCheckNow" type="button">🔎 Controlla se Gemini risponde</button>
  </section>
  <section class="card">
   <details>
@@ -253,10 +258,27 @@ const $=id=>document.getElementById(id);
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 const synth=window.speechSynthesis||null;
 const defaultWorker="https://babbo-natale-ai.massalex2022.workers.dev";
-let worker="",active=false,busy=false,micWanted=false,rec=null,listening=false,talking=false,speechToken=0,session=0,history=[],mood="",cameraStream=null,voiceList=[],lastResultAt=0,recRetry=null,lastSantaText="";
+let worker="",active=false,busy=false,micWanted=false,rec=null,listening=false,talking=false,speechToken=0,session=0,history=[],mood="",cameraStream=null,voiceList=[],lastResultAt=0,recRetry=null,lastSantaText="",offlineTurns=0,aiFailures=0;
 function setStatus(t){$("status").textContent=t}
 function caption(t){$("caption").textContent=t}
 function setAI(t){$("aiMode").textContent=t}
+function setAIHealth(kind,detail){
+ const el=$("aiIndicator");el.classList.remove("ok","fail");
+ if(kind==="ok"){el.classList.add("ok");el.textContent="🟢 Gemini collegato: risposte generate dall'AI";return}
+ if(kind==="fail"){el.classList.add("fail");el.textContent="🔴 Modalità guidata: Gemini non risponde"+(detail?" ("+detail+")":"");return}
+ el.textContent="🟡 Collegamento Gemini da verificare";
+}
+function friendlyAIError(e){
+ if(e&&e.name==="AbortError")return "tempo di attesa superato";
+ const raw=String(e&&e.message||e||"Errore sconosciuto");
+ if(/HTTP 429/.test(raw))return "limite di richieste gratuite raggiunto (429)";
+ if(/HTTP 401/.test(raw))return "autenticazione della chiave Gemini fallita (401)";
+ if(/HTTP 403/.test(raw))return "accesso Gemini negato (403)";
+ if(/HTTP 404/.test(raw))return "percorso /api/chat inesistente (404)";
+ if(/HTTP 5\d\d/.test(raw))return "problema sul Worker o su Gemini ("+(raw.match(/HTTP \d+/)||["HTTP 500"])[0]+")";
+ if(/Failed to fetch|NetworkError|Load failed/i.test(raw))return "Worker non raggiungibile o CORS non configurato";
+ return raw.slice(0,130);
+}
 function log(role,text){if(role==="santa"){lastSantaText=text;$("replayBtn").disabled=false;}history.push({role:role,text:text});if(history.length>24)history.shift();const div=document.createElement("div");div.className="bubble"+(role==="kid"?" kid":"");div.textContent=(role==="santa"?"🎅 ":"🧒 ")+text;$("chatLog").appendChild(div);$("chatLog").scrollTop=$("chatLog").scrollHeight;caption(text)}
 function cleanName(){return $("kidName").value.trim().replace(/[<>]/g,"").slice(0,25)}
 function remember(key,val){try{localStorage.setItem(key,val)}catch(e){}}
@@ -433,47 +455,132 @@ function stop(){
  caption("Oh oh oh! A presto, piccolo amico! 🎄");setStatus("Chiamata terminata. Puoi richiamare quando vuoi.");
 }
 function offlineReply(t){
- const q=t.toLowerCase(),n=cleanName(),who=n?", "+n:"";
- if(/trist|piang|paura|spavent|male|sol[oa]/.test(q)||mood==="triste")return "Oh, piccolo amico"+who+", mi spiace che ti senta così. Ti mando un grande abbraccio dal Polo Nord. Vuoi dirmi cosa è successo? Puoi anche parlarne con un adulto di cui ti fidi.";
- if(/regal|desider|vorrei|giocattol|lego|bambol|biciclett/.test(q))return "Ho ascoltato il tuo desiderio"+who+"! Gli elfi amano preparare sorprese, ma non posso promettere un regalo preciso. Cosa ti piace di più di quel gioco?";
- if(/renn|rudolph|rudolf/.test(q))return "Le renne si stanno allenando nella neve! Rudolph oggi ha corso così veloce che un elfo ha perso il cappello. Tu hai un animale preferito?";
- if(/elf|follett/.test(q))return "Gli elfi sono molto occupati nel laboratorio! Uno ha nascosto un biscotto in una scatola dei regali. Che scherzetti fai tu?";
- if(/ciao|salve|buongiorno|buonasera/.test(q))return "Oh oh oh! Che bello sentirti"+who+"! Raccontami: cosa ti piace di più del Natale?";
- if(/vero|esist|robot|intelligenza artificiale/.test(q))return "Sono un Babbo Natale virtuale creato con l'intelligenza artificiale, per giocare e raccontare storie insieme. Quale storia natalizia vuoi ascoltare?";
- if(/scuol|compit|amici|amiciz/.test(q))return "Anche gli elfi imparano ogni giorno qualcosa di nuovo! Ti va di raccontarmi come è andata oggi?";
- if(/come stai|come va/.test(q))return "Benissimo, grazie! Ho una tazza di cioccolata calda e il camino acceso. E tu, come stai?";
- if(mood==="timido")return "Non c'è nessuna fretta"+who+". Possiamo parlare piano piano. Vuoi dirmi il tuo colore preferito?";
- if(mood==="emozionato"||mood==="felice")return "Oh oh oh! Il tuo entusiasmo fa scintillare tutto il laboratorio! Raccontami che cosa ti rende così felice.";
- return "Ho ho ho! Che interessante"+who+"! Sono tutto orecchi, raccontami ancora un po'.";
+ offlineTurns++;
+ const q=t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""),n=cleanName(),who=n?", "+n:"";
+ const alternate=arr=>arr[(offlineTurns-1)%arr.length];
+ if(/trist|piang|paura|spavent|solo|sola|male|ansia/.test(q)||mood==="triste")return alternate([
+  "Mi dispiace che ti senti così"+who+". Ti mando un abbraccio dal Polo Nord. Se vuoi, puoi raccontarlo anche a un adulto di fiducia.",
+  "A volte tutti abbiamo giornate difficili, perfino gli elfi. Io ti ascolto con calma. C'è qualcuno di fiducia vicino a te con cui parlarne?",
+  "Ti penso con affetto"+who+". Vuoi parlarmi di una cosa bella che potrebbe farti stare un pochino meglio?"
+ ]);
+ if(/regal|desider|vorrei|giocattol|lego|bambol|biciclett|videogioc/.test(q))return alternate([
+  "Gli elfi prendono nota dei desideri, ma non posso promettere un regalo preciso. Che cosa ti piace di più di quello che hai scelto?",
+  "Oh oh oh, nel laboratorio ci sono tante idee! Un regalo speciale può essere anche un'avventura da condividere. Con chi vorresti giocare?",
+  "La lista dei desideri è importante, ma lo è anche la sorpresa! Che cosa ti piacerebbe costruire o inventare?"
+ ]);
+ if(/renn|rudolph|rudolf|slitta/.test(q))return alternate([
+  "Le renne si esercitano tra fiocchi di neve e stelle. Rudolph guida il gruppo con il suo naso rosso! Quale renna vorresti conoscere?",
+  "Oggi una renna ha fatto una gara sulla neve, e un elfo ha perso il berretto! Vuoi sapere com'è finita?",
+  "La slitta è pronta per il prossimo viaggio immaginario. Secondo te, dove dovremmo andare per primi?"
+ ]);
+ if(/elf|follett|laboratorio/.test(q))return alternate([
+  "Gli elfi stanno preparando piccoli giocattoli colorati. Un elfo oggi ha dipinto un pacco tutto a pois! Ti piace inventare cose?",
+  "Il laboratorio profuma di biscotti e cioccolata. Che cosa costruiresti se fossi uno dei miei elfi?",
+  "Oh oh oh! Un elfo ha nascosto una campanella fra i pacchi. Aiutami a immaginare dove potrebbe trovarsi!"
+ ]);
+ if(/vero|esist|robot|intelligenza artificiale/.test(q))return "Sono un Babbo Natale virtuale creato con l'intelligenza artificiale per condividere la magia del Natale. Puoi parlare con me in compagnia di un adulto.";
+ if(/scuol|compit|amici|amiciz|maestr/.test(q))return alternate([
+  "La scuola è piena di scoperte, un po' come il laboratorio degli elfi! Quale materia ti incuriosisce di più?",
+  "Gli amici sono preziosi, proprio come i miei aiutanti al Polo Nord. Ti va di raccontarmi un gioco che fai con loro?",
+  "Anche gli elfi imparano sbagliando, e nessuno deve essere perfetto. Che cosa ti piacerebbe imparare?"
+ ]);
+ if(/cane|gatto|animal|cucciol|conigl/.test(q))return alternate([
+  "Oh, gli animali sono amici meravigliosi! Le mie renne adorano la neve. Qual è il tuo animale preferito?",
+  "Un elfo ha disegnato un gatto con il cappello di Natale! Tu hai un animale in casa o ne vorresti uno?"
+ ]);
+ if(/storia|raccont|fiab|avventura/.test(q))return alternate([
+  "C'era una volta un piccolo elfo che smarrì una stella luminosa. La ritrovò seguendo il suono di una campanella nel bosco. Vuoi inventare insieme il seguito?",
+  "Una notte la renna Rudolph scoprì una scia di impronte nella neve: erano di un pupazzo che aveva imparato a ballare! E tu che finale inventeresti?"
+ ]);
+ if(/natale|albero|decoraz|pallin|presepe/.test(q))return alternate([
+  "Al Polo Nord abbiamo appena acceso le lucine sull'albero! Tu preferisci le decorazioni rosse, dorate o argentate?",
+  "Per me Natale vuol dire stare insieme e condividere gesti gentili. Qual è la tua tradizione preferita?"
+ ]);
+ if(/sport|calcio|pallone|nuot|basket|padel|corsa/.test(q))return alternate([
+  "Anche gli elfi organizzano piccole gare sulla neve! Quale sport ti piace praticare?",
+  "Oh oh oh, essere in movimento fa bene! Hai una squadra o un atleta preferito?"
+ ]);
+ if(/ciao|salve|buongiorno|buonasera/.test(q))return alternate([
+  "Oh oh oh, che bello sentirti"+who+"! Quale parte del Natale ami di più?",
+  "Benvenuto nel laboratorio del Polo Nord"+who+"! Vuoi una storia sulle renne o sugli elfi?"
+ ]);
+ if(/come stai|come va/.test(q))return alternate([
+  "Molto bene! Ho una tazza di cioccolata calda e gli elfi stanno lavorando. Tu come stai?",
+  "Oh oh oh, grazie di avermelo chiesto! Oggi ho aiutato Rudolph a trovare una campanella. E la tua giornata come va?"
+ ]);
+ if(mood==="timido")return alternate([
+  "Non c'è fretta"+who+". Possiamo parlare pianissimo. Ti va di dirmi il tuo colore preferito?",
+  "Sai, anche alcune renne sono timide! Ti faccio una domanda facile: preferisci la neve o le stelle?"
+ ]);
+ // Senza Gemini non fingiamo di poter rispondere a qualunque domanda.
+ return alternate([
+  "Oh oh oh! In questo momento la linea con il mio cervello AI è un po' disturbata. Non voglio inventare una risposta. Possiamo parlare di renne, giochi o Natale?",
+  "Che bella curiosità"+who+"! La mia connessione AI al momento non funziona, quindi non riesco a rispondere con precisione. Vuoi scegliere una storia natalizia?",
+  "Il laboratorio ha un piccolo problema di collegamento con l'intelligenza artificiale! Intanto posso raccontarti una storia sugli elfi, se vuoi.",
+  "Mi piace molto quando fai domande"+who+"! Per risponderti bene devo riattivare la connessione AI. Vuoi intanto scoprire cosa combinano le mie renne?"
+ ]);
 }
 async function aiReply(text){
  const url=$("workerUrl").value.trim().replace(/\/+$/,"")||worker||defaultWorker;
  if(!/^https:\/\/[a-z0-9.-]+(?::[0-9]+)?$/i.test(url))throw Error("indirizzo Worker non valido");
- const ctrl=new AbortController();const tm=setTimeout(()=>ctrl.abort(),18000);
+ const historyWithoutCurrent=history.slice(0,-1).slice(-8);
+ async function postChat(messages){
+  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),18000);
+  try{
+   const response=await fetch(url+"/api/chat",{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({message:text,history:messages,name:cleanName(),emotion:mood}),
+    signal:controller.signal
+   });
+   if(!response.ok){
+    let detail="";
+    try{
+     const data=await response.clone().json();
+     const msg=data&&typeof data.error==="string"?data.error:"";
+     // Non mostrare contenuti del server che potrebbero includere segreti.
+     if(/quota|limit|rate/i.test(msg))detail=" (quota Gemini)";
+    }catch(e){}
+    const err=new Error("HTTP "+response.status+detail);
+    err.httpStatus=response.status;
+    throw err;
+   }
+   let data;
+   try{data=await response.json()}catch(e){throw Error("Il Worker non ha restituito JSON valido");}
+   if(data&&data.error)throw Error("Il Worker ha segnalato un errore");
+   const reply=data&& (data.reply||data.response||data.text||(data.result&&data.result.reply));
+   if(typeof reply!=="string"||!reply.trim())throw Error("Il Worker ha restituito una risposta vuota");
+   return reply.trim().slice(0,1200);
+  }finally{clearTimeout(timeout)}
+ }
  try{
-  const response=await fetch(url+"/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:text,history:history.slice(-10),name:cleanName(),emotion:mood}),signal:ctrl.signal});
-  if(!response.ok)throw Error("HTTP "+response.status);
-  const j=await response.json();
-  const reply=j.reply||j.response||j.text||(j.result&&j.result.reply);
-  if(typeof reply!=="string"||!reply.trim())throw Error("risposta vuota");
-  return reply.trim().slice(0,1200);
- }finally{clearTimeout(tm)}
+  return await postChat(historyWithoutCurrent);
+ }catch(e){
+  // Alcuni Worker meno recenti non accettano la struttura della cronologia;
+  // si ritenta SENZA cronologia soltanto per errori di validazione.
+  if(e.httpStatus===400 && historyWithoutCurrent.length) return await postChat([]);
+  throw e;
+ }
 }
 async function ask(text){
  if(!text||busy)return;
  if(!active){setStatus("Prima premi «Chiama Babbo Natale».");return}
- const callSession=session;busy=true;stopRecognition();cancelVoice();log("kid",text);$("callLabel").textContent="✨ Sto pensando";setStatus("✨ Babbo Natale sta pensando…");
- let reply,fromAI=false;
- try{reply=await aiReply(text);fromAI=true}
- catch(e){
-  reply=offlineReply(text);
-  const err=e&&e.name==="AbortError"?"tempo scaduto":String(e.message||e);
-  setAI("⚠️ Gemini non disponibile ("+err+"). Stai usando risposte dimostrative. Verifica il Worker nelle impostazioni.");
- }
+ const callSession=session;
+ busy=true;stopRecognition();cancelVoice();log("kid",text);
+ $("callLabel").textContent="✨ Sto pensando";setStatus("✨ Babbo Natale sta pensando…");
+ let reply,fromAI=false,why="";
+ try{reply=await aiReply(text);fromAI=true;aiFailures=0;}
+ catch(e){reply=offlineReply(text);aiFailures++;why=friendlyAIError(e);}
  if(callSession!==session||!active)return;
  busy=false;
- if(fromAI){setAI("✅ Risposta AI generata tramite il tuo Worker Gemini.");setStatus("✨ Risposta AI pronta");}
- else setStatus("⚠️ Risposta dimostrativa: Gemini non ha risposto.");
+ if(fromAI){
+  setAIHealth("ok");
+  setAI("✅ Gemini ha generato una risposta specifica alla tua domanda.");
+  setStatus("✨ Risposta AI pronta");
+ }else{
+  setAIHealth("fail",why);
+  setAI("⚠️ Questa risposta è guidata, NON è Gemini. Motivo: "+why+". Usa «Controlla se Gemini risponde» per verificare il collegamento.");
+  setStatus("⚠️ Gemini non disponibile: sto usando risposte guidate.");
+ }
  log("santa",reply);speak(reply,false);
 }
 async function toggleCamera(){
@@ -525,13 +632,27 @@ worker=$("workerUrl").value;
 $("saveWorker").onclick=()=>{
  const url=$("workerUrl").value.trim().replace(/\/+$/,"");
  if(!/^https:\/\/[a-z0-9.-]+(?::[0-9]+)?$/i.test(url)){$("workerTestResult").textContent="Inserisci un indirizzo HTTPS valido, senza /api/chat alla fine.";return}
- worker=url;remember("santa_ai_endpoint",url);$("workerTestResult").textContent="Indirizzo salvato su questo dispositivo. La chiave Gemini deve restare su Cloudflare.";
+ worker=url;remember("santa_ai_endpoint",url);setAIHealth("unknown");$("workerTestResult").textContent="Indirizzo salvato su questo dispositivo. La chiave Gemini deve restare su Cloudflare. Premi «Controlla se Gemini risponde» per verificare.";
 };
 $("testWorker").onclick=async()=>{
  $("workerTestResult").textContent="Verifica in corso…";
- try{const resp=await aiReply("Ciao Babbo Natale! Rispondi in italiano con una frase di saluto.");$("workerTestResult").textContent="✅ Gemini ha risposto: "+resp.slice(0,160);setAI("✅ Connessione Gemini verificata.");}
- catch(e){$("workerTestResult").textContent="⚠️ Gemini non ha risposto: "+(e.name==="AbortError"?"tempo scaduto":e.message)+". La modalità dimostrativa rimane disponibile.";}
+ $("aiCheckNow").disabled=true;
+ $("aiCheckNow").textContent="⏳ Verifico Gemini…";
+ try{
+  const resp=await aiReply("Ciao Babbo Natale! Rispondi in italiano con una frase breve di saluto.");
+  $("workerTestResult").textContent="✅ Gemini ha risposto: "+resp.slice(0,140);
+  setAIHealth("ok");setAI("✅ Test riuscito. Gemini è raggiungibile, puoi fare domande libere.");
+ }catch(e){
+  const reason=friendlyAIError(e);
+  $("workerTestResult").textContent="⚠️ Verifica fallita: "+reason+". Controlla indirizzo Worker e chiave Gemini su Cloudflare.";
+  setAIHealth("fail",reason);
+  setAI("⚠️ Gemini non disponibile: "+reason+". La modalità guidata NON può rispondere liberamente a tutte le domande.");
+ }finally{
+  $("aiCheckNow").disabled=false;
+  $("aiCheckNow").textContent="🔎 Controlla se Gemini risponde";
+ }
 };
+$("aiCheckNow").onclick=()=>$("testWorker").click();
 if(synth){updateVoices();synth.addEventListener&&synth.addEventListener("voiceschanged",updateVoices);setTimeout(updateVoices,650)}
 else $("voiceInfo").textContent="Sintesi vocale non disponibile sul dispositivo.";
 window.addEventListener("pagehide",()=>{stopRecognition();cancelVoice();cameraStream&&cameraStream.getTracks().forEach(t=>t.stop())});
