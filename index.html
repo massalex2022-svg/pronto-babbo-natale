@@ -357,7 +357,8 @@ function nativeSpeak(text,token){
  window.santaVoiceAmplitude=-1;
  const u=new SpeechSynthesisUtterance(text);u.lang="it-IT";u.pitch=Number($("pitch").value);u.rate=Number($("rate").value);u.volume=1;
  const v=selectedVoice();if(v)u.voice=v;
- setSpeechState(true);
+ setSpeechState(false);
+ u.onstart=()=>{if(token===speechToken){setSpeechState(true);setStatus("🎅 Babbo Natale sta parlando con la voce del computer.");}};
  u.onend=()=>speechFinished(token);
  u.onerror=()=>{if(token!==speechToken)return;setStatus("Voce del browser non disponibile.");speechFinished(token)};
  try{synth.speak(u)}catch(e){speechFinished(token)}
@@ -389,24 +390,26 @@ function scheduleListen(){
 function startListening(){
  if(!active||!micWanted||talking||busy||listening)return;
  if(!SR){setStatus("Il riconoscimento vocale non è disponibile: scrivi il tuo messaggio qui sotto.");micWanted=false;updateMic();return}
- let r;
+ let r,received=false;
  try{r=new SR();r.lang="it-IT";r.continuous=false;r.interimResults=false;r.maxAlternatives=1;rec=r}catch(e){setStatus("Microfono non supportato. Prova Chrome o usa la tastiera.");return}
  r.onstart=()=>{listening=true;$("callLabel").textContent="🎤 In ascolto";setStatus("🎤 Ti ascolto… parla pure!")};
  r.onresult=e=>{
-  listening=false;lastResultAt=Date.now();
+  received=true;listening=false;lastResultAt=Date.now();
   const t=e.results&&e.results[0]&&e.results[0][0]?e.results[0][0].transcript:"";
   rec=null;if(t.trim())ask(t.trim());
  };
  r.onerror=e=>{
   listening=false;rec=null;
   if(!active||!micWanted)return;
-  if(e.error==="no-speech"){setStatus("🎤 Ti ascolto: puoi parlare oppure scrivere.");return}
+  if(e.error==="no-speech"){micWanted=false;updateMic();setStatus("🎤 Non ho sentito parole. Premi nuovamente il microfono per riprovare, oppure scrivi.");return}
   if(e.error==="not-allowed"||e.error==="service-not-allowed"){micWanted=false;updateMic();setStatus("Microfono non autorizzato. Consenti l'accesso nelle impostazioni del browser, oppure scrivi.");return}
   setStatus("Microfono: "+e.error+". Puoi scrivere un messaggio o ripremere 🎙️.");
  };
  r.onend=()=>{
   listening=false;if(rec===r)rec=null;
-  // Per evitare riavvii continui, riprova l'ascolto solo dopo una risposta parlata o con un nuovo tocco.
+  if(!received&&active&&micWanted&&!talking&&!busy){
+   micWanted=false;updateMic();setStatus("🎤 Ascolto in pausa. Tocca il microfono per parlare di nuovo.");
+  }
  };
  try{r.start()}catch(e){listening=false;rec=null;setStatus("Per attivare il microfono tocca di nuovo 🎙️.")}
 }
@@ -483,7 +486,7 @@ function usePhoto(photo){
  $("stage").classList.toggle("photo",photo);
  $("photoMode").classList.toggle("selected",photo);$("animatedMode").classList.toggle("selected",!photo);
  $("photoMode").setAttribute("aria-pressed",String(photo));$("animatedMode").setAttribute("aria-pressed",String(!photo));
- $("modeLabel").textContent=photo?"Foto realistica · movimento leggero":"Cartoon · labiale indicativo";
+ $("modeLabel").textContent=photo?"Foto realistica · bocca simulata":"Cartoon · labiale indicativo";
  $("lookHint").textContent=photo?"Nella foto la zona della bocca si muove in modo simulato se il rilevamento facciale riesce. Non è un labiale fotorealistico sincronizzato.":"Il cartoon muove la bocca mentre parla, ma non segue esattamente i singoli suoni.";
 }
 $("animatedMode").onclick=()=>usePhoto(false);$("photoMode").onclick=()=>usePhoto(true);
