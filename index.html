@@ -541,7 +541,7 @@ window.addEventListener("pagehide",()=>{stopRecognition();cancelVoice();cameraSt
    ctx.restore();
   }
   frame++;
-  raf=requestAnimationFrame(draw);
+  raf= speaking ? requestAnimationFrame(draw) : 0;
  }
  function render(){if(ready&&!raf)raf=requestAnimationFrame(draw)}
  new MutationObserver(render).observe(document.body,{attributes:true,attributeFilter:["class"]});
